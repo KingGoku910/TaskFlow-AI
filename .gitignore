@@ -110,7 +110,7 @@ STRIPE-WEBHOOK-SETUP.md
 GITHUB-SETUP.md
 BILLING-IMPLEMENTATION-GUIDE.md
 BILLING-IMPLEMENTATION-SUMMARY.md
-/docs (directory)
-/database
+docs/
+database/
 # Local Netlify folder
 .netlify
