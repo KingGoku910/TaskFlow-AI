@@ -1,0 +1,460 @@
+/* Effecto TaskFlow - Custom Theme Variables */
+/* These variables are dynamically updated via JavaScript when users change settings */
+
+:root {
+  /* Kanban Board Colors (user customizable) - Restored to original teal theme */
+  --kanban-todo-color: #07fc81; /* Teal for todo */
+  --kanban-progress-color: #f59e0b; /* Amber for in progress */
+  --kanban-completed-color: #0051ff; /* Emerald for completed */
+  
+  /* Theme Customization - Restored to original teal accent */
+  --accent-color: #14b8a6; /* Teal accent to match original theme */
+  --border-radius: 8px;
+  --base-font-size: 16px;
+  --animation-duration: 300ms;
+}
+
+/* Apply custom colors to Kanban columns */
+.kanban-column[data-status="todo"] {
+  border-top: 3px solid var(--kanban-todo-color);
+}
+
+.kanban-column[data-status="todo"] .kanban-header {
+  background: linear-gradient(135deg, var(--kanban-todo-color) 10%, transparent);
+}
+
+.kanban-column[data-status="in_progress"] {
+  border-top: 3px solid var(--kanban-progress-color);
+}
+
+.kanban-column[data-status="in_progress"] .kanban-header {
+  background: linear-gradient(135deg, var(--kanban-progress-color) 10%, transparent);
+}
+
+.kanban-column[data-status="completed"] {
+  border-top: 3px solid var(--kanban-completed-color);
+}
+
+.kanban-column[data-status="completed"] .kanban-header {
+  background: linear-gradient(135deg, var(--kanban-completed-color) 10%, transparent);
+}
+
+/* Legacy support for pending status */
+.kanban-column[data-status="pending"] {
+  border-top: 3px solid var(--kanban-todo-color);
+}
+
+.kanban-column[data-status="pending"] .kanban-header {
+  background: linear-gradient(135deg, var(--kanban-todo-color) 10%, transparent);
+}
+
+/* Apply accent color to key UI elements */
+.text-primary {
+  color: var(--accent-color) !important;
+}
+
+.bg-primary {
+  background-color: var(--accent-color) !important;
+}
+
+.border-primary {
+  border-color: var(--accent-color) !important;
+}
+
+/* Custom border radius */
+.rounded, .rounded-md {
+  border-radius: var(--border-radius);
+}
+
+.rounded-lg {
+  border-radius: calc(var(--border-radius) * 1.5);
+}
+
+/* Custom font sizing */
+body {
+  font-size: var(--base-font-size);
+}
+
+/* Animation control */
+* {
+  transition-duration: var(--animation-duration);
+}
+
+/* Compact mode styles */
+.compact-mode .p-4 {
+  padding: 0.75rem;
+}
+
+.compact-mode .p-6 {
+  padding: 1rem;
+}
+
+.compact-mode .space-y-4 > * + * {
+  margin-top: 0.75rem;
+}
+
+.compact-mode .h-16 {
+  height: 3rem;
+}
+
+/* High contrast mode */
+.high-contrast {
+  --foreground: #000000;
+  --background: #ffffff;
+  --border: #333333;
+  --muted: #666666;
+}
+
+.dark.high-contrast {
+  --foreground: #ffffff;
+  --background: #0000002d;
+  --border: #cccccc;
+  --muted: #999999;
+}
+
+.high-contrast .text-muted-foreground {
+  color: var(--muted) !important;
+}
+
+.high-contrast .border {
+  border-color: var(--border) !important;
+}
+
+/* Task card custom styling */
+.task-card {
+  border-left: 4px solid transparent;
+  transition: all var(--animation-duration) ease;
+}
+
+.task-card[data-status="todo"] {
+  border-left-color: var(--kanban-todo-color);
+}
+
+.task-card[data-status="in_progress"] {
+  border-left-color: var(--kanban-progress-color);
+}
+
+.task-card[data-status="completed"] {
+  border-left-color: var(--kanban-completed-color);
+}
+
+/* Legacy support for pending status */
+.task-card[data-status="pending"] {
+  border-left-color: var(--kanban-todo-color);
+}
+
+/* Priority indicators using custom colors */
+.priority-high {
+  color: #ef4444;
+}
+
+.priority-medium {
+  color: var(--kanban-progress-color);
+}
+
+.priority-low {
+  color: var(--kanban-completed-color);
+}
+
+/* Custom button variations */
+.btn-primary {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.btn-primary:hover {
+  background-color: hsl(var(--accent-color-hov) / 0.9);
+  border-color: hsl(var(--accent-color-hov) / 0.9);
+}
+
+/* Settings page preview elements */
+.color-preview {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--border-radius);
+  border: 2px solid var(--border);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .compact-mode body {
+    font-size: calc(var(--base-font-size) * 0.9);
+  }
+}
+
+/* Dark mode border overrides for dashboard components */
+@media (prefers-color-scheme: dark) {
+  /* Card borders in dark mode */
+  .dark [data-ui="card"],
+  .dark .ui-card,
+  .dark div[class*="card"],
+  .dark div[class*="Card"] {
+    border-color: var(--sidebar-accent);
+  }
+
+  /* Dialog content borders */
+  .dark div[role="dialog"],
+  .dark .dialog-content,
+  .dark div[class*="dialog"] {
+    border-color: var(--sidebar-accent);
+  }
+
+  /* Alert borders */
+  .dark div[class*="alert"]:not([class*="destructive"]) {
+    border-color: var(--sidebar-accent);
+  }
+
+  /* Input borders */
+  .dark input:not([class*="destructive"]),
+  .dark select:not([class*="destructive"]),
+  .dark textarea:not([class*="destructive"]) {
+    border-color: var(--sidebar-accent);
+  }
+
+  /* Button borders for secondary variants */
+  .dark button[class*="secondary"],
+  .dark button[class*="outline"] {
+    border-color: var(--sidebar-accent);
+  }
+}
+
+/* Force dark mode border styles when html has dark class */
+html.dark [data-ui="card"],
+html.dark .ui-card,
+html.dark div[class*="card"]:not([class*="destructive"]),
+html.dark div[class*="Card"]:not([class*="destructive"]) {
+  border-color: var(--sidebar-accent);
+}
+
+html.dark div[role="dialog"],
+html.dark .dialog-content,
+html.dark div[class*="dialog"]:not([class*="destructive"]) {
+  border-color: var(--sidebar-accent);
+}
+
+html.dark div[class*="alert"]:not([class*="destructive"]) {
+  border-color: var(--sidebar-accent);
+}
+
+html.dark input:not([class*="destructive"]):not([type="file"]),
+html.dark select:not([class*="destructive"]),
+html.dark textarea:not([class*="destructive"]) {
+  border-color: var(--sidebar-accent);
+}
+
+html.dark button[class*="secondary"]:not([class*="destructive"]),
+html.dark button[class*="outline"]:not([class*="destructive"]) {
+  border-color: var(--sidebar-accent);
+}
+
+/* Specific dashboard component borders */
+html.dark .dashboard-tile {
+  border-color: var(--sidebar-accent) !important;
+}
+
+html.dark .add-task-dialog,
+html.dark .task-decomposition-section .card,
+html.dark .kanban-column {
+  border-color: var(--sidebar-accent) !important;
+}
+
+/* Specific border overrides for task cards and kanban components */
+html.dark .task-card,
+html.dark .kanban-column,
+html.dark .dashboard-tile,
+html.dark .task-decomposition-section .w-full {
+  border-color: var(--sidebar-accent) !important;
+}
+
+/* Override for Card component in dark mode */
+html.dark [class*="card"]:not([class*="destructive"]):not([class*="error"]) {
+  border-color: var(--sidebar-accent);
+}
+
+/* Ensure Dialog components use sidebar accent borders */
+html.dark [data-radix-dialog-content],
+html.dark [role="dialog"] {
+  border-color: var(--sidebar-accent);
+}
+
+/* Task item borders in kanban */
+html.dark .task-item .task-card {
+  border-color: var(--sidebar-accent);
+}
+
+/* Targeted border overrides for common UI components in dark mode */
+html.dark div[class*="border-"]:not([class*="destructive"]):not([class*="border-primary"]):not([class*="border-transparent"]),
+html.dark section[class*="border-"]:not([class*="destructive"]):not([class*="border-primary"]):not([class*="border-transparent"]),
+html.dark article[class*="border-"]:not([class*="destructive"]):not([class*="border-primary"]):not([class*="border-transparent"]),
+html.dark input[class*="border-"]:not([class*="destructive"]):not([class*="border-primary"]):not([class*="border-transparent"]),
+html.dark button[class*="border-"]:not([class*="destructive"]):not([class*="border-primary"]):not([class*="border-transparent"]),
+html.dark span[class*="border-"]:not([class*="destructive"]):not([class*="border-primary"]):not([class*="border-transparent"]) {
+  border-color: var(--sidebar-accent) !important;
+}
+
+/* FORCE OVERRIDE: Tailwind border utilities in dark mode - highest specificity */
+html.dark .border-gray-200,
+html.dark .border-gray-300,
+html.dark .border-gray-400,
+html.dark .border-gray-500,
+html.dark .border-gray-600,
+html.dark .border-gray-700,
+html.dark .border-gray-800,
+html.dark .border-zinc-200,
+html.dark .border-zinc-300,
+html.dark .border-zinc-400,
+html.dark .border-zinc-500,
+html.dark .border-zinc-600,
+html.dark .border-zinc-700,
+html.dark .border-zinc-800,
+html.dark .border-slate-200,
+html.dark .border-slate-300,
+html.dark .border-slate-400,
+html.dark .border-slate-500,
+html.dark .border-slate-600,
+html.dark .border-slate-700,
+html.dark .border-slate-800 {
+  border-color: #14b8a6 !important;
+}
+
+/* Force override all gray border variants including with opacity */
+html.dark [class*="border-gray-"],
+html.dark [class*="border-zinc-"],
+html.dark [class*="border-slate-"] {
+  border-color: #14b8a6 !important;
+}
+
+/* Force override specific border patterns */
+html.dark .border-gray-200\/50,
+html.dark .border-gray-700\/50,
+html.dark [class*="border-gray-"][class*="\/"] {
+  border-color: #14b8a6 !important;
+}
+
+/* Override the default border utility class */
+html.dark .border:not([class*="border-primary"]):not([class*="border-destructive"]):not([class*="border-transparent"]) {
+  border-color: #14b8a6 !important;
+}
+
+/* Force all existing border rules to use !important */
+html.dark [data-ui="card"],
+html.dark .ui-card,
+html.dark div[class*="card"]:not([class*="destructive"]),
+html.dark div[class*="Card"]:not([class*="destructive"]) {
+  border-color: #14b8a6 !important;
+}
+
+html.dark div[role="dialog"],
+html.dark .dialog-content,
+html.dark div[class*="dialog"]:not([class*="destructive"]) {
+  border-color: #14b8a6 !important;
+}
+
+html.dark div[class*="alert"]:not([class*="destructive"]) {
+  border-color: #14b8a6 !important;
+}
+
+html.dark input:not([class*="destructive"]):not([type="file"]),
+html.dark select:not([class*="destructive"]),
+html.dark textarea:not([class*="destructive"]) {
+  border-color: #14b8a6 !important;
+}
+
+html.dark button[class*="secondary"]:not([class*="destructive"]),
+html.dark button[class*="outline"]:not([class*="destructive"]) {
+  border-color: #14b8a6 !important;
+}
+
+html.dark .add-task-dialog,
+html.dark .task-decomposition-section .card,
+html.dark .kanban-column {
+  border-color: #14b8a6 !important;
+}
+
+html.dark div[class*="border"]:not([class*="destructive"]):not([class*="border-primary"]):not([class*="border-transparent"]),
+html.dark section[class*="border"]:not([class*="destructive"]):not([class*="border-primary"]):not([class*="border-transparent"]),
+html.dark article[class*="border"]:not([class*="destructive"]):not([class*="border-primary"]):not([class*="border-transparent"]),
+html.dark input[class*="border"]:not([class*="destructive"]):not([class*="border-primary"]):not([class*="border-transparent"]),
+html.dark button[class*="border"]:not([class*="destructive"]):not([class*="border-primary"]):not([class*="border-transparent"]),
+html.dark span[class*="border"]:not([class*="destructive"]):not([class*="border-primary"]):not([class*="border-transparent"]) {
+  border-color: #14b8a6 !important;
+}
+
+/* ULTIMATE OVERRIDE: Use CSS custom properties for border-color */
+html.dark * {
+  --tw-border-color: var(--sidebar-accent);
+}
+
+/* Override specific gray border utilities with highest specificity */
+html.dark .border-gray-200 { border-color: var(--sidebar-accent) !important; }
+html.dark .border-gray-300 { border-color: var(--sidebar-accent) !important; }
+html.dark .border-gray-400 { border-color: var(--sidebar-accent) !important; }
+html.dark .border-gray-500 { border-color: var(--sidebar-accent) !important; }
+html.dark .border-gray-600 { border-color: var(--sidebar-accent) !important; }
+html.dark .border-gray-700 { border-color: var(--sidebar-accent) !important; }
+html.dark .border-gray-800 { border-color: var(--sidebar-accent) !important; }
+html.dark .border-zinc-200 { border-color: var(--sidebar-accent) !important; }
+html.dark .border-zinc-300 { border-color: var(--sidebar-accent) !important; }
+html.dark .border-zinc-400 { border-color: var(--sidebar-accent) !important; }
+html.dark .border-zinc-500 { border-color: var(--sidebar-accent) !important; }
+html.dark .border-zinc-600 { border-color: var(--sidebar-accent) !important; }
+html.dark .border-zinc-700 { border-color: var(--sidebar-accent) !important; }
+html.dark .border-zinc-800 { border-color: var(--sidebar-accent) !important; }
+html.dark .border-slate-200 { border-color: var(--sidebar-accent) !important; }
+html.dark .border-slate-300 { border-color: var(--sidebar-accent) !important; }
+html.dark .border-slate-400 { border-color: var(--sidebar-accent) !important; }
+html.dark .border-slate-500 { border-color: var(--sidebar-accent) !important; }
+html.dark .border-slate-600 { border-color: var(--sidebar-accent) !important; }
+html.dark .border-slate-700 { border-color: var(--sidebar-accent) !important; }
+html.dark .border-slate-800 { border-color: var(--sidebar-accent) !important; }
+
+/* Override common border patterns - Use more specific selectors instead of broad catch-all */
+html.dark .border { border-color: var(--sidebar-accent) !important; }
+/* Removed overly broad selector that was causing conflicts */
+
+/* Override ::after pseudo-elements in sidebar for border colors */
+html.dark [data-sidebar="rail"]:hover::after {
+  background-color: #14b8a6 !important;
+}
+
+html.dark [data-sidebar="rail"]::after {
+  background-color: #14b8a6 !important;
+}
+
+html.dark [data-sidebar="group-action"]::after {
+  background-color: transparent !important;
+}
+
+html.dark [data-sidebar="menu-action"]::after {
+  background-color: transparent !important;
+}
+
+/* Fix hover states for sidebar border */
+html.dark [data-sidebar="rail"]:hover {
+  background-color: hsl(var(--sidebar-background)) !important;
+}
+
+html.dark [data-sidebar="rail"]:hover::after {
+  background-color: hsl(var(--sidebar-accent)) !important;
+}
+
+html.dark .group-data-[collapsible=offcanvas]:hover .bg-sidebar {
+  background-color: hsl(var(--sidebar-background)) !important;
+}
+
+/* Ensure sidebar border uses teal color */
+html.dark .border-sidebar-border {
+  border-color: hsl(var(--sidebar-accent)) !important;
+}
+
+html.dark [class*="border-sidebar-border"] {
+  border-color: hsl(var(--sidebar-accent)) !important;
+}
+
+html.dark .bg-sidebar-border {
+  background-color: hsl(var(--sidebar-accent)) !important;
+}
+
+html.dark [class*="bg-sidebar-border"] {
+  background-color: hsl(var(--sidebar-accent)) !important;
+}

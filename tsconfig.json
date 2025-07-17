@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", /* Updated to a more modern ECMAScript version for better compatibility and features. */
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true, /* Improves compilation performance by skipping type checking of declaration files. */
+    "strict": true, /* Enables a broad range of type checking for stricter code quality and fewer runtime errors. */
+    "forceConsistentCasingInFileNames": true, /* Ensures consistent casing in file names to prevent import errors on case-sensitive file systems. */
+    "noEmit": true, /* Ensures no output is emitted, as Next.js handles compilation. */
+    "esModuleInterop": true, /* Allows default imports from modules with no default export, improving compatibility. */
+    "module": "esnext",
+    "moduleResolution": "bundler", /* Modern module resolution strategy for bundlers like Webpack/Rollup. */
+    "resolveJsonModule": true, /* Allows importing .json files. */
+    "isolatedModules": true, /* Ensures each file can be transpiled independently, which is good for build tools like Babel/SWC. */
+    "jsx": "preserve", /* Preserves JSX for Next.js to handle. */
+    "incremental": true, /* Enables incremental compilation for faster rebuilds. */
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "baseUrl": ".", /* Set base URL for module resolution, complementing the paths alias. */
+    "noImplicitReturns": true, /* Ensures all code paths in a function return a value if expected. */
+    "noFallthroughCasesInSwitch": true, /* Prevents accidental fall-through in switch statements. */
+    "noUnusedLocals": true, /* Reports errors on unused local variables. */
+    "noUnusedParameters": true /* Reports errors on unused parameters. */
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}

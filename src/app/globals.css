@@ -1,0 +1,149 @@
+/* Import custom theme variables */
+@import '../styles/custom-theme.css';
+
+/* Import highlight.js theme for code syntax highlighting */
+@import 'highlight.js/styles/github-dark.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Dark Mode Defaults (Applied via 'dark' class in layout) */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 180 100% 25%; /* Teal */
+    --primary-foreground: 0 0% 98%; /* Light text on Teal */
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 180 100% 25%; /* Teal */
+    --accent-hov: 158 65% 52%; /* Emerald - Match primary */
+    --accent-foreground: 0 0% 98%; /* Light text on Teal */
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 180 100% 35%;
+    --border-hov: 158 65% 52%; /* Emerald - Match primary */
+    --input: 240 3.7% 15.9%;
+    --ring: 180 100% 35%; /* Brighter Teal for focus rings */
+    --chart-1: 180 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 197 37% 44%; /* Adjusted for dark */
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+    --sidebar-background: 240 10% 3.9%; /* Match background */
+    --sidebar-foreground: 0 0% 98%; /* Match foreground */
+    --sidebar-primary: 180 100% 25%; /* Teal */
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 180 49% 50%; /* Teal - Match primary */
+    --sidebar-accent-hov: 158 65% 52%; /* Emerald - Match primary */
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 180 100% 35%; /* Match border */
+    --sidebar-border-hov: 158 65% 52%; /* Emerald - Match primary */
+    --sidebar-ring: 180 100% 35%; /* Match ring */
+
+    /* Hero Gradient Stops for Dark Mode */
+    --hero-grad-stop-1: var(--primary); /* Teal */
+    --hero-grad-stop-2: 150 50% 35%;    /* Darker Green */
+    --hero-grad-stop-3: 220 8% 20%;     /* Medium-Dark Gray */
+    --hero-grad-stop-4: var(--card);     /* Dark Background Card Color */
+  }
+
+  .light {
+    /* Light Mode Variables */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 180 100% 25%; /* Teal */
+    --primary-foreground: 0 0% 98%; /* Light text on Teal */
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 180 100% 25%; /* Teal */
+    --accent-hov: 158 65% 52%; /* Emerald - Match primary */
+    --accent-foreground: 0 0% 98%; /* Light text on Teal */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 180 100% 35%;
+    --border-hov: 158 65% 52%; /* Emerald - Match primary */
+    --input: 180 100% 35%;
+    --ring: 180 100% 35%; /* Brighter Teal for focus rings */
+    --chart-1: 180 70% 40%; /* Adjusted for light */
+    --chart-2: 160 60% 35%; /* Adjusted for light */
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.9% 10%;
+    --sidebar-primary: 180 100% 25%; /* Teal */
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 180 100% 25%; /* Teal - Match primary */
+    --sidebar-accent-hov: 158 65% 52%; /* Emerald - Match primary */
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 180 100% 35%;
+    --sidebar-border-hov: 158 65% 52%; /* Emerald - Match primary */
+    --sidebar-ring: 180 100% 35%;
+
+    /* Hero Gradient Stops for Light Mode */
+    --hero-grad-stop-1: var(--primary); /* Teal */
+    --hero-grad-stop-2: 140 60% 70%;    /* Lighter Green */
+    --hero-grad-stop-3: 220 30% 92%;    /* Very Light Gray */
+    --hero-grad-stop-4: var(--secondary);/* Light Background Secondary Color */
+  }
+}
+
+@layer base {
+  * {
+    /* Enhanced font smoothing for all elements */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+    /* Enable smooth font rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .animated-hero-gradient {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--hero-grad-stop-1)),
+      hsl(var(--hero-grad-stop-2)),
+      hsl(var(--hero-grad-stop-3)),
+      hsl(var(--hero-grad-stop-4))
+    );
+    background-size: 250% 250%;
+    animation: gradientAnimation 20s ease infinite;
+  }
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
