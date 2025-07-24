@@ -44,7 +44,7 @@ const FeatureDetailItem: React.FC<FeatureDetailItemProps> = ({
       <LdgDiv className="inline-block rounded-lg bg-muted px-3 py-1 text-sm text-primary">{badgeText}</LdgDiv>
       <LdgHeading3 className="text-2xl font-bold text-foreground">
         {title}
-        {comingSoon && <LdgSpan className="text-sm text-primary/80 ml-2">(Coming Soon)</LdgSpan>}
+        {/* Removed Coming Soon tag */}
       </LdgHeading3>
       <LdgParagraph className="text-muted-foreground dark:text-foreground/90">
         {description}

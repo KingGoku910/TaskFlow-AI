@@ -137,19 +137,22 @@
 }
 
 @layer components {
-  /* Liquid Glass Effect */
+  /* Apple Liquid Glass Effect */
   .glass-container {
-    /* @apply/ backdrop-blur-lg backdrop-saturate-150; */
     position: relative;
     isolation: isolate;
     border-radius: var(--radius);
     overflow: visible;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
     background: linear-gradient(
-      to bottom right,
-      rgba(1, 199, 199, 0.3) 0%,
-      rgba(128, 128, 128, 0.025) 100%
+      135deg,
+      rgba(29, 214, 152, 0.15) 0%,
+      rgba(20, 184, 166, 0.1) 50%,
+      rgba(0, 0, 0, 0.05) 100%
     );
+    border: 1px solid rgba(255, 255, 255, 0.18);
   }
   
   .glass-container::before {
@@ -159,12 +162,24 @@
 
   /* Dark mode adjustments */
   .dark .glass-container {
-    background-color: rgba(15, 15, 15, 0.6);
+    background: linear-gradient(
+      135deg,
+      rgba(29, 214, 152, 0.1) 0%,
+      rgba(20, 184, 166, 0.08) 50%,
+      rgba(0, 0, 0, 0.05) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   /* Light mode adjustments */
   .light .glass-container {
-    background-color: rgba(255, 255, 255, 0.6);
+    background: linear-gradient(
+      135deg,
+      rgba(29, 214, 152, 0.15) 0%,
+      rgba(20, 184, 166, 0.1) 50%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.25);
   }
 
   .animated-hero-gradient {
@@ -178,6 +193,29 @@
     background-size: 250% 250%;
     animation: gradientAnimation 20s ease infinite;
   }
+
+  /* Hero 'Actionable' text stroke for readability */
+  .hero-actionable {
+    -webkit-text-stroke: 1px white;
+    /* fallback for other browsers */
+    text-shadow: 0 0 2px white;
+  }
+
+  /* Increase stroke on medium screens */
+  @media (min-width: 768px) {
+    .hero-actionable {
+      -webkit-text-stroke: 1.5px white;
+      text-shadow: 0 0 2px white;
+    }
+  }
+
+  /* Increase stroke on large screens */
+  @media (min-width: 1024px) {
+    .hero-actionable {
+      -webkit-text-stroke: 2px white;
+      text-shadow: 0 0 3px white;
+    }
+  }
 }
 
 @keyframes gradientAnimation {
@@ -189,5 +227,13 @@
   }
   100% {
     background-position: 0% 50%;
+  }
+}
+
+@layer base {
+  /* Add drop-shadow to logo images in light mode for better contrast */
+  .light .dashboard-logo-link img,
+  .light header a img {
+    filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.8));
   }
 }

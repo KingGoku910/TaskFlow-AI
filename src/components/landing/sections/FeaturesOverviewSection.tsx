@@ -56,7 +56,7 @@ export function FeaturesOverviewSection() {
         <LdgDiv className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
           <LdgDiv className="inline-block rounded-lg bg-muted px-3 py-1 text-sm text-primary">Key Features</LdgDiv>
           <LdgHeading2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-foreground">
-            Everything You Need to Get Organized
+            <LdgSpan className="text-primary">Everything</LdgSpan> You Need to Get <LdgSpan className="text-primary">Organized</LdgSpan>
           </LdgHeading2>
           <LdgParagraph className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-foreground/80">
             From AI-powered task breakdown to visual project management, TaskFlow AI streamlines your workflow.
@@ -69,7 +69,7 @@ export function FeaturesOverviewSection() {
                 {feature.icon}
                 <LdgHeading3 className="text-xl font-bold text-card-foreground text-center">
                   {feature.title}
-                  {feature.comingSoon && <LdgSpan className="text-xs text-primary/80 ml-1">(Coming Soon)</LdgSpan>}
+                  {/* Removed Coming Soon tag */}
                 </LdgHeading3>
               </LdgDiv>
               <LdgParagraph className="text-sm text-muted-foreground flex-grow dark:text-card-foreground/80">

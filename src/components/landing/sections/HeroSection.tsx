@@ -1,4 +1,3 @@
-
 // @/components/landing/sections/HeroSection.tsx
 'use client';
 
@@ -15,11 +14,11 @@ import { LdgDiv } from '../elements/LdgDiv';
 export function HeroSection() {
   return (
     <section className="hero-section w-full py-12 md:py-24 lg:py-32 xl:py-36 animated-hero-gradient">
-      <LdgDiv className="container mx-auto px-4 md:px-6">
+      <LdgDiv className="container mx-auto px-4 md:px-6 glass-container p-8 rounded-2xl">
         <LdgDiv className="grid gap-6 lg:grid-cols-2 lg:gap-12 xl:gap-16 items-center">
-          <LdgDiv className="space-y-4 text-center lg:text-left">
+          <LdgDiv className="space-y-4 text-center lg:text-left backdrop-blur-sm">
             <LdgHeading1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl/none text-foreground">
-              Transform Ideas into <LdgSpan className="text-primary">Actionable</LdgSpan> Tasks
+              Transform Ideas into <LdgSpan className="text-primary hero-actionable">Actionable</LdgSpan> Tasks
             </LdgHeading1>
             <LdgParagraph className="max-w-[600px] text-foreground/90 dark:text-foreground/80 md:text-xl mx-auto lg:mx-0">
               TaskFlow AI leverages AI to break down complex goals into manageable steps. Manage your projects effortlessly with our intuitive Kanban board and intelligent features.

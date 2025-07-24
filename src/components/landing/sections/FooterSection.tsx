@@ -71,13 +71,17 @@ export function FooterSection() {
 
 
   return (
-    <footer className="bg-muted text-muted-foreground border-t">
+    <footer className="bg-muted dark:bg-black text-muted-foreground border-t">
       <LdgDiv className="container mx-auto px-4 md:px-6 py-12">
         <LdgDiv className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           <LdgDiv>
-            <Link href="/" className="flex items-center mb-4" prefetch={false}>
-              <AppLogoSvg className="h-7 w-7 text-primary" />
-              <LdgSpan className="ml-2 text-xl font-bold text-foreground">TaskFlow AI</LdgSpan>
+            <Link href="/" className="flex items-center justify-center" prefetch={false}>
+              <img
+                src="https://imgur.com/F8fyOmc.png"
+                alt="TaskFlow AI"
+                className="h-24 w-56 max-w-[340px] object-contain"
+              />
+              <span className="sr-only">TaskFlow AI</span>
             </Link>
             <LdgParagraph className="text-sm dark:text-foreground/80">Transforming ideas into actionable tasks with the power of AI.</LdgParagraph>
           </LdgDiv>

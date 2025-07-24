@@ -9,7 +9,9 @@
   --kanban-pending-color: #ffcc00; /* Yellow for pending */
   
   /* Theme Customization - Restored to original teal accent */
-  --accent-color: #14b8a6; /* Teal accent to match original theme */
+  --primary-color: rgb(29, 214, 152);
+  --secondary-color: #14b8a6; /* Old teal as secondary color */
+  --accent-color: var(--primary-color); /* Set accent to new primary */
   --border-radius: 8px;
   --base-font-size: 16px;
   --animation-duration: 300ms;
