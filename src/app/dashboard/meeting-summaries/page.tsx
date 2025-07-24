@@ -35,6 +35,9 @@ import { processMeetingTranscript, convertActionItemsToTasks } from './actions';
 import { Label } from '@/components/ui/label';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { SavedMeetingSummaries } from '@/components/dashboard/SavedMeetingSummaries';
+import { EnhancedMeetingRecorder } from '@/services/enhanced-meeting-recorder';
+import { Switch } from '@/components/ui/switch';
+import { EnhancedAudioPlayer } from '@/components/ui/enhanced-audio-player';
 
 export default function MeetingSummariesPage() {
   const supabase = createClient();
@@ -61,6 +64,12 @@ export default function MeetingSummariesPage() {
   const [transcriptText, setTranscriptText] = useState<string>('');
   const [interimText, setInterimText] = useState<string>('');
   const [isEditingTranscript, setIsEditingTranscript] = useState<boolean>(false);
+  const [enhancedTranscript, setEnhancedTranscript] = useState<string>('');
+  const [grammarCorrections, setGrammarCorrections] = useState<string[]>([]);
+  const [speakerSegments, setSpeakerSegments] = useState<Array<{speaker: string, text: string}>>([]);
+  const [enhancedRecorder, setEnhancedRecorder] = useState<any>(null);
+  const [audioQuality, setAudioQuality] = useState<'microphone-only' | 'system-audio' | 'mixed'>('microphone-only');
+  const [grammarEnabled, setGrammarEnabled] = useState<boolean>(true);
   const transcriptRef = useRef<HTMLDivElement>(null);
   
   // Available languages for speech recognition
@@ -207,144 +216,49 @@ export default function MeetingSummariesPage() {
 
   const startRecording = async () => {
     try {
-      // Start audio recording
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
-      const chunks: BlobPart[] = [];
+      // Initialize enhanced recorder
+      const recorder = new EnhancedMeetingRecorder({
+        captureSystemAudio: audioQuality === 'system-audio' || audioQuality === 'mixed',
+        enhanceGrammar: grammarEnabled,
+        language: selectedLanguage,
+        autoSpeakerDetection: true
+      });
 
-      recorder.ondataavailable = (event) => {
-        chunks.push(event.data);
+      // Set up callbacks
+      recorder.onTranscriptUpdate = (rawTranscript: string, enhanced: string) => {
+        setLiveTranscript(rawTranscript);
+        setEnhancedTranscript(enhanced);
+        
+        // Auto-scroll to bottom
+        if (transcriptRef.current) {
+          transcriptRef.current.scrollTop = transcriptRef.current.scrollHeight;
+        }
       };
 
-      recorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' });
-        setAudioBlob(blob);
-        stream.getTracks().forEach(track => track.stop());
+      recorder.onError = (error: Error) => {
+        console.error('Recording error:', error);
+        toast({
+          title: 'Recording Error',
+          description: error.message,
+          variant: 'destructive'
+        });
+        setIsRecording(false);
       };
 
-      recorder.start();
-      setMediaRecorder(recorder);
+      recorder.onStatusChange = (status: string) => {
+        console.log('Status:', status);
+      };
+
+      setEnhancedRecorder(recorder);
+
+      // Start recording
+      await recorder.startRecording();
+      
       setIsRecording(true);
       setLiveTranscript('');
-      setLastProcessedIndex(0);
-      setProcessedTranscripts(new Set());
-      setLastTranscriptUpdate(0);
-      setTranscriptText('');
-      setInterimText('');
-      
-      // Initialize speech recognition for live transcription
-      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
-        
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.lang = selectedLanguage;
-        
-        recognition.onresult = (event: any) => {
-          let currentFinalText = '';
-          let currentInterimText = '';
-          
-          // Process only NEW results (not all results from beginning)
-          for (let i = event.resultIndex; i < event.results.length; i++) {
-            const result = event.results[i];
-            const transcript = result[0].transcript;
-            
-            if (result.isFinal) {
-              currentFinalText += transcript;
-            } else {
-              currentInterimText += transcript;
-            }
-          }
-          
-          // Update states properly
-          if (currentFinalText) {
-            // Add new final text to existing transcript
-            setTranscriptText(prev => prev + currentFinalText);
-            setLiveTranscript(prev => prev + currentFinalText);
-            setInterimText(''); // Clear interim when final is received
-          } else {
-            // Update interim text (this replaces previous interim)
-            setInterimText(currentInterimText);
-          }
-          
-          // Auto-scroll to bottom when new content is added
-          if (transcriptRef.current) {
-            transcriptRef.current.scrollTop = transcriptRef.current.scrollHeight;
-          }
-        };
-        
-        recognition.onerror = (event: any) => {
-          console.error('Speech recognition error:', event.error);
-          // Don't restart automatically to avoid loops
-        };
-        
-        recognition.onend = () => {
-          // Only restart if we're still recording and not paused
-          if (isRecording && !isPaused) {
-            setTimeout(() => {
-              if (isRecording && !isPaused) {
-                try {
-                  const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-                  const newRecognition = new SpeechRecognition();
-                  
-                  newRecognition.continuous = true;
-                  newRecognition.interimResults = true;
-                  newRecognition.lang = selectedLanguage;
-                  
-                  // Create NEW event handlers to avoid accumulation
-                  newRecognition.onresult = (event: any) => {
-                    let currentFinalText = '';
-                    let currentInterimText = '';
-                    
-                    // Process only NEW results (not all results from beginning)
-                    for (let i = event.resultIndex; i < event.results.length; i++) {
-                      const result = event.results[i];
-                      const transcript = result[0].transcript;
-                      
-                      if (result.isFinal) {
-                        currentFinalText += transcript;
-                      } else {
-                        currentInterimText += transcript;
-                      }
-                    }
-                    
-                    // Update states properly
-                    if (currentFinalText) {
-                      // Add new final text to existing transcript
-                      setTranscriptText(prev => prev + currentFinalText);
-                      setLiveTranscript(prev => prev + currentFinalText);
-                      setInterimText(''); // Clear interim when final is received
-                    } else {
-                      // Update interim text (this replaces previous interim)
-                      setInterimText(currentInterimText);
-                    }
-                    
-                    // Auto-scroll to bottom when new content is added
-                    if (transcriptRef.current) {
-                      transcriptRef.current.scrollTop = transcriptRef.current.scrollHeight;
-                    }
-                  };
-                  
-                  newRecognition.onerror = (event: any) => {
-                    console.error('Speech recognition error:', event.error);
-                  };
-                  
-                  newRecognition.onend = recognition.onend; // Reuse the same onend logic
-                  
-                  newRecognition.start();
-                  setRecognitionRef(newRecognition);
-                } catch (error) {
-                  console.error('Error restarting recognition:', error);
-                }
-              }
-            }, 100);
-          }
-        };
-        
-        recognition.start();
-        setRecognitionRef(recognition);
-      }
+      setEnhancedTranscript('');
+      setGrammarCorrections([]);
+      setSpeakerSegments([]);
       
       // Create new meeting session
       const newMeeting = {
@@ -367,13 +281,14 @@ export default function MeetingSummariesPage() {
       }, 1000);
 
       toast({
-        title: 'Meeting Started',
-        description: 'Recording audio and generating live transcript...',
+        title: 'Enhanced Meeting Started',
+        description: `Recording with ${audioQuality === 'system-audio' ? 'system audio capture' : audioQuality === 'mixed' ? 'mixed audio' : 'microphone only'}${grammarEnabled ? ' and live grammar correction' : ''}`,
       });
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Could not start recording';
       toast({
         title: 'Error',
-        description: 'Could not access microphone',
+        description: errorMessage,
         variant: 'destructive'
       });
     }
@@ -424,42 +339,55 @@ export default function MeetingSummariesPage() {
     }
   };
 
-  const stopRecording = () => {
-    if (mediaRecorder && isRecording) {
-      mediaRecorder.stop();
-      if (recognitionRef) {
-        recognitionRef.stop();
-        setRecognitionRef(null);
+  const stopRecording = async () => {
+    if (enhancedRecorder && isRecording) {
+      try {
+        const recording = await enhancedRecorder.stopRecording();
+        const enhancedSummary = await enhancedRecorder.getEnhancedTranscript();
+        
+        // Update states
+        setIsRecording(false);
+        setIsPaused(false);
+        setEnhancedTranscript(enhancedSummary.enhancedTranscript);
+        setSpeakerSegments(enhancedSummary.speakerSegments);
+        setGrammarCorrections(enhancedSummary.corrections);
+        
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+        
+        // Update current meeting with enhanced transcript
+        if (currentMeeting) {
+          setCurrentMeeting((prev: any) => ({
+            ...prev,
+            transcript: enhancedSummary.enhancedTranscript,
+            endTime: new Date().toISOString(),
+            duration: recordingDuration,
+            speakerSegments: enhancedSummary.speakerSegments,
+            corrections: enhancedSummary.corrections,
+            confidence: enhancedSummary.confidence
+          }));
+        }
+        
+        toast({
+          title: 'Meeting Ended',
+          description: `Recording stopped. Enhanced transcript generated with ${enhancedSummary.confidence * 100}% confidence.`,
+        });
+      } catch (error) {
+        console.error('Error stopping recording:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to stop recording properly',
+          variant: 'destructive'
+        });
       }
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-      
-      setIsRecording(false);
-      setIsPaused(false);
-      setLastProcessedIndex(0);
-      setProcessedTranscripts(new Set());
-      setInterimText('');
-      
-      // Update current meeting with transcript
-      if (currentMeeting) {
-        setCurrentMeeting((prev: any) => ({
-          ...prev,
-          transcript: liveTranscript,
-          endTime: new Date().toISOString(),
-          duration: recordingDuration
-        }));
-      }
-      
-      toast({
-        title: 'Meeting Ended',
-        description: 'Recording stopped. Ready for AI summarization.',
-      });
     }
   };
 
   const playAudio = () => {
+    // This function is now handled by EnhancedAudioPlayer component
+    // Keep for backward compatibility but functionality moved to component
     if (audioBlob) {
       const audio = new Audio(URL.createObjectURL(audioBlob));
       audio.play();
@@ -862,7 +790,7 @@ export default function MeetingSummariesPage() {
 
   return (
     <TooltipProvider>
-      <div className="space-y-8 h-full overflow-y-auto w-full">
+      <div className="space-y-8 h-full overflow-y-auto w-full pb-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column - Meeting Manager */}
           <div className="space-y-8">
@@ -884,28 +812,84 @@ export default function MeetingSummariesPage() {
 
                 {/* Live Meeting Section */}
                 {!currentMeeting ? (
-                  <div className="space-y-4">
-                    {/* Language Selection */}
-                    <div className="flex items-center gap-4">
-                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Speech Recognition Language:
-                      </label>
-                      <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
-                        <SelectTrigger className="w-64">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {availableLanguages.map((language) => (
-                            <SelectItem key={language.code} value={language.code}>
-                              <div className="flex items-center gap-2">
-                                <span>{language.flag}</span>
-                                <span>{language.name}</span>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                  <div className="space-y-6">
+                    {/* Enhanced Recording Configuration */}
+                    <Card className="border-blue-200 bg-blue-50 dark:bg-blue-950/30 dark:border-blue-800">
+                      <CardHeader className="pb-3">
+                        <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-200 flex items-center gap-2">
+                          <Sparkles className="h-4 w-4" />
+                          Enhanced Recording Settings
+                        </h4>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {/* Audio Capture Mode */}
+                        <div className="space-y-2">
+                          <Label className="text-sm font-medium">Audio Capture Mode</Label>
+                          <Select value={audioQuality} onValueChange={(value: 'microphone-only' | 'system-audio' | 'mixed') => setAudioQuality(value)}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="microphone-only">
+                                <div className="flex items-center gap-2">
+                                  <Mic className="h-3 w-3" />
+                                  <span>Microphone Only</span>
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="system-audio">
+                                <div className="flex items-center gap-2">
+                                  <Users className="h-3 w-3" />
+                                  <span>System Audio (Calls/Meetings)</span>
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="mixed">
+                                <div className="flex items-center gap-2">
+                                  <Zap className="h-3 w-3" />
+                                  <span>Mixed Audio (Microphone + System)</span>
+                                </div>
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <p className="text-xs text-muted-foreground">
+                            {audioQuality === 'microphone-only' && 'Records only your voice through microphone'}
+                            {audioQuality === 'system-audio' && 'Captures system audio from calls/video meetings (requires screen sharing permission)'}
+                            {audioQuality === 'mixed' && 'Records both your microphone and system audio for complete meeting capture'}
+                          </p>
+                        </div>
+
+                        {/* Grammar Enhancement */}
+                        <div className="flex items-center justify-between">
+                          <div className="space-y-1">
+                            <Label className="text-sm font-medium">Live Grammar Correction</Label>
+                            <p className="text-xs text-muted-foreground">Auto-correct grammar and punctuation in real-time</p>
+                          </div>
+                          <Switch 
+                            checked={grammarEnabled} 
+                            onCheckedChange={setGrammarEnabled}
+                          />
+                        </div>
+
+                        {/* Language Selection */}
+                        <div className="space-y-2">
+                          <Label className="text-sm font-medium">Speech Recognition Language</Label>
+                          <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {availableLanguages.map((language) => (
+                                <SelectItem key={language.code} value={language.code}>
+                                  <div className="flex items-center gap-2">
+                                    <span>{language.flag}</span>
+                                    <span>{language.name}</span>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </CardContent>
+                    </Card>
                     
                     {/* Start Recording Button */}
                     <div className="flex gap-4">
@@ -915,8 +899,26 @@ export default function MeetingSummariesPage() {
                         className="flex items-center gap-2 bg-red-600 hover:bg-red-700"
                       >
                         <Mic className="h-5 w-5" />
-                        Start Meeting Recording
+                        Start Enhanced Recording
                       </Button>
+                    </div>
+
+                    {/* Feature Benefits */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                      <div className="flex items-start gap-2 p-3 bg-green-50 dark:bg-green-950/30 rounded-lg">
+                        <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="font-medium text-green-800 dark:text-green-200">System Audio Capture</p>
+                          <p className="text-green-600 dark:text-green-300">Records both sides of video calls</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
+                        <Sparkles className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="font-medium text-blue-800 dark:text-blue-200">Live Grammar Correction</p>
+                          <p className="text-blue-600 dark:text-blue-300">Real-time punctuation and grammar fixes</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ) : (
@@ -976,6 +978,12 @@ export default function MeetingSummariesPage() {
                                 <span>Listening...</span>
                               </div>
                             )}
+                            {grammarEnabled && grammarCorrections.length > 0 && (
+                              <Badge variant="secondary" className="text-xs">
+                                <Sparkles className="h-3 w-3 mr-1" />
+                                {grammarCorrections.length} corrections
+                              </Badge>
+                            )}
                             <Button
                               variant="ghost"
                               size="sm"
@@ -989,7 +997,7 @@ export default function MeetingSummariesPage() {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => {
-                                  setTranscriptText(liveTranscript);
+                                  setLiveTranscript(enhancedTranscript || liveTranscript);
                                   setIsEditingTranscript(false);
                                   toast({
                                     title: 'Transcript Saved',
@@ -1006,45 +1014,101 @@ export default function MeetingSummariesPage() {
                         <div className="relative">
                           {isEditingTranscript ? (
                             <Textarea
-                              value={liveTranscript}
-                              onChange={(e) => setLiveTranscript(e.target.value)}
+                              value={enhancedTranscript || liveTranscript}
+                              onChange={(e) => setEnhancedTranscript(e.target.value)}
                               placeholder="Edit transcript here..."
                               rows={6}
                               className="text-sm"
                             />
                           ) : (
-                            <div 
-                              ref={transcriptRef}
-                              className="min-h-[150px] max-h-[200px] overflow-y-auto border border-gray-300 rounded-md p-3 bg-white dark:bg-gray-800"
-                            >
-                              {/* Final transcript (confirmed) */}
-                              <span className="text-gray-900 dark:text-gray-100">
-                                {transcriptText}
-                              </span>
-                              {/* Interim transcript (being processed) - only show if not editing */}
-                              {interimText && !isEditingTranscript && (
-                                <span className="text-gray-500 dark:text-gray-400 italic">
-                                  {interimText}
-                                </span>
-                              )}
-                              {/* Cursor indicator */}
-                              {isRecording && !isPaused && !isEditingTranscript && (
-                                <span className="inline-block w-0.5 h-4 bg-blue-500 animate-pulse ml-1"></span>
-                              )}
-                              {/* Placeholder when empty */}
-                              {!transcriptText && !interimText && (
-                                <span className="text-gray-400 dark:text-gray-500">
-                                  Live transcript will appear here as you speak...
-                                </span>
+                            <div className="space-y-4">
+                              {/* Enhanced Transcript View */}
+                              <div 
+                                ref={transcriptRef}
+                                className="min-h-[150px] max-h-[200px] overflow-y-auto border border-gray-300 rounded-md p-3 bg-white dark:bg-gray-800"
+                              >
+                                {/* Show enhanced transcript if available */}
+                                {enhancedTranscript ? (
+                                  <div className="space-y-2">
+                                    <div className="text-xs text-green-600 dark:text-green-400 mb-2 flex items-center gap-1">
+                                      <CheckCircle className="h-3 w-3" />
+                                      Enhanced with grammar correction
+                                    </div>
+                                    <span className="text-gray-900 dark:text-gray-100">
+                                      {enhancedTranscript}
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <>
+                                    {/* Regular transcript */}
+                                    <span className="text-gray-900 dark:text-gray-100">
+                                      {liveTranscript}
+                                    </span>
+                                    {/* Interim transcript (being processed) */}
+                                    {interimText && !isEditingTranscript && (
+                                      <span className="text-gray-500 dark:text-gray-400 italic">
+                                        {interimText}
+                                      </span>
+                                    )}
+                                    {/* Cursor indicator */}
+                                    {isRecording && !isPaused && !isEditingTranscript && (
+                                      <span className="inline-block w-0.5 h-4 bg-blue-500 animate-pulse ml-1"></span>
+                                    )}
+                                  </>
+                                )}
+                                {/* Placeholder when empty */}
+                                {!liveTranscript && !enhancedTranscript && !interimText && (
+                                  <span className="text-gray-400 dark:text-gray-500">
+                                    Live transcript will appear here as you speak...
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Speaker Segments Preview */}
+                              {speakerSegments.length > 0 && (
+                                <div className="border border-dashed border-gray-300 rounded-md p-3 bg-gray-50 dark:bg-gray-800">
+                                  <div className="text-xs text-blue-600 dark:text-blue-400 mb-2 flex items-center gap-1">
+                                    <Users className="h-3 w-3" />
+                                    Speaker Detection ({speakerSegments.length} segments)
+                                  </div>
+                                  <div className="space-y-2 max-h-32 overflow-y-auto">
+                                    {speakerSegments.slice(-3).map((segment, index) => (
+                                      <div key={index} className="text-xs">
+                                        <span className="font-medium text-purple-600 dark:text-purple-400">
+                                          {segment.speaker}:
+                                        </span>
+                                        <span className="ml-2 text-gray-700 dark:text-gray-300">
+                                          {segment.text.substring(0, 100)}
+                                          {segment.text.length > 100 ? '...' : ''}
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
                               )}
                             </div>
                           )}
-                          {/* Processing indicator */}
-                          {interimText && !isEditingTranscript && (
-                            <div className="absolute top-2 right-2 text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
-                              Processing...
-                            </div>
-                          )}
+                          {/* Audio Quality Indicator */}
+                          <div className="absolute top-2 right-2 flex items-center gap-1">
+                            {audioQuality === 'system-audio' && (
+                              <Badge variant="outline" className="text-xs bg-green-100 text-green-700">
+                                <Users className="h-3 w-3 mr-1" />
+                                System Audio
+                              </Badge>
+                            )}
+                            {audioQuality === 'mixed' && (
+                              <Badge variant="outline" className="text-xs bg-purple-100 text-purple-700">
+                                <Zap className="h-3 w-3 mr-1" />
+                                Mixed Audio
+                              </Badge>
+                            )}
+                            {grammarEnabled && (
+                              <Badge variant="outline" className="text-xs bg-blue-100 text-blue-700">
+                                <Sparkles className="h-3 w-3 mr-1" />
+                                Grammar+
+                              </Badge>
+                            )}
+                          </div>
                         </div>
                       </div>
 
@@ -1127,6 +1191,34 @@ export default function MeetingSummariesPage() {
                               </ul>
                             </div>
                           )}
+                        </div>
+                      )}
+
+                      {/* Audio Playback Section */}
+                      {audioBlob && !isRecording && (
+                        <div className="space-y-3 pt-4 border-t">
+                          <h4 className="font-semibold flex items-center gap-2">
+                            <Play className="h-4 w-4" />
+                            Meeting Recording
+                          </h4>
+                          <EnhancedAudioPlayer
+                            audioSrc={audioBlob}
+                            title={currentMeeting?.title || 'Meeting Recording'}
+                            showDownload={true}
+                            onTimeUpdate={(currentTime, duration) => {
+                              // You can sync with transcript timestamps here
+                              // For example, highlight transcript sections based on time
+                              console.log(`Playback: ${Math.floor(currentTime)}s / ${Math.floor(duration)}s`);
+                            }}
+                            onEnded={() => {
+                              setIsPlaying(false);
+                              console.log('Meeting recording playback ended');
+                            }}
+                          />
+                          <p className="text-xs text-muted-foreground">
+                            Use the controls above to play, pause, skip, and adjust playback speed. 
+                            Click anywhere on the timeline to jump to that point in the recording.
+                          </p>
                         </div>
                       )}
                     </CardContent>

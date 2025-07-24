@@ -22,7 +22,7 @@ export function HeroSection() {
               Transform Ideas into <LdgSpan className="text-primary">Actionable</LdgSpan> Tasks
             </LdgHeading1>
             <LdgParagraph className="max-w-[600px] text-foreground/90 dark:text-foreground/80 md:text-xl mx-auto lg:mx-0">
-              Effecto TaskFlow leverages AI to break down complex goals into manageable steps. Manage your projects effortlessly with our intuitive Kanban board and intelligent features.
+              TaskFlow AI leverages AI to break down complex goals into manageable steps. Manage your projects effortlessly with our intuitive Kanban board and intelligent features.
             </LdgParagraph>
             <LdgDiv className="space-x-4 mt-6 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
               <Link href="/auth" prefetch={false} className="group w-full sm:w-auto">

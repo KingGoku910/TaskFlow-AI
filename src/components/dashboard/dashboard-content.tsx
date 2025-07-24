@@ -103,7 +103,7 @@ export function DashboardContent({ initialTaskStats, userId }: DashboardContentP
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-muted-foreground mt-2">
             {isFirstTimeUser 
-              ? "Welcome to Effecto TaskFlow! Here's your productivity command center."
+              ? "Welcome to TaskFlow AI! Here's your productivity command center."
               : "Welcome back! Here's an overview of your productivity tools and current progress."
             }
           </p>

@@ -1,4 +1,4 @@
-# 💰 Effecto TaskFlow - Pricing & Features
+# 💰 TaskFlow AI - Pricing & Features
 
 ## 🆓 Free Tier
 **Perfect for personal productivity**
@@ -58,7 +58,7 @@
 ## 🛒 How to Upgrade
 
 ### From Free to Pro
-1. Sign in to your Effecto TaskFlow account
+1. Sign in to your TaskFlow AI account
 2. Navigate to Settings → Billing
 3. Select "Upgrade to Pro"
 4. Complete secure payment process

@@ -1,6 +1,6 @@
-# Contributing to Innova-TEX AI - Effecto TaskFlow
+# Contributing to Innova-TEX AI - TaskFlow AI
 
-We welcome contributions to make Effecto TaskFlow even better! This document provides guidelines for contributing to the project.
+We welcome contributions to make TaskFlow AI even better! This document provides guidelines for contributing to the project.
 
 ## 🚀 Getting Started
 
@@ -14,8 +14,8 @@ We welcome contributions to make Effecto TaskFlow even better! This document pro
 
 1. **Fork the repository**
    ```bash
-   git clone https://github.com/your-username/Innova-TEX-AI-Effecto-TaskFlow.git
-   cd Innova-TEX-AI-Effecto-TaskFlow
+   git clone https://github.com/your-username/Innova-TEX-AI-TaskFlow AI.git
+   cd Innova-TEX-AI-TaskFlow AI
    ```
 
 2. **Install dependencies**
@@ -37,7 +37,7 @@ We welcome contributions to make Effecto TaskFlow even better! This document pro
 ## 🎯 How to Contribute
 
 ### Reporting Issues
-- Use the [GitHub Issues](https://github.com/your-username/Innova-TEX-AI-Effecto-TaskFlow/issues) page
+- Use the [GitHub Issues](https://github.com/your-username/Innova-TEX-AI-TaskFlow AI/issues) page
 - Search for existing issues before creating new ones
 - Provide detailed descriptions and steps to reproduce
 
@@ -138,4 +138,4 @@ Feel free to reach out through:
 - GitHub Issues
 - Email: support@innova-tex.com
 
-Thank you for contributing to Effecto TaskFlow! 🎉
+Thank you for contributing to TaskFlow AI! 🎉

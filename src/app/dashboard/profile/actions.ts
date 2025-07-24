@@ -8,7 +8,7 @@ import { revalidatePath } from 'next/cache';
 // Define the tutorial tasks
 const TUTORIAL_TASKS_DATA = [
   {
-    title: "👋 Welcome to Effecto TaskFlow!",
+    title: "👋 Welcome to TaskFlow AI!",
     description: "Let's get you started! This board is your new productivity hub.\n\n- [ ] **Explore the Dashboard**: Notice the 'Pending', 'In Progress', and 'Completed' columns. These help you organize your work.\n- [ ] **Drag this Task**: Click and hold this task, then drag it to the 'In Progress' column to see how easy it is to update status.",
     priority: "high" as const,
     deadline: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
@@ -39,7 +39,7 @@ const TUTORIAL_TASKS_DATA = [
   },
   {
     title: "🎉 You're All Set!",
-    description: "You've learned the basics of Effecto TaskFlow! Feel free to explore other features like the Account and Settings pages (accessible from the sidebar). You can delete these tutorial tasks once you're comfortable (click a task to see details, then find the delete option).\n\nHappy tasking!",
+    description: "You've learned the basics of TaskFlow AI! Feel free to explore other features like the Account and Settings pages (accessible from the sidebar). You can delete these tutorial tasks once you're comfortable (click a task to see details, then find the delete option).\n\nHappy tasking!",
     priority: "low" as const,
     deadline: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000).toISOString(),
   }
@@ -72,7 +72,7 @@ async function createTutorialTasks(userId: string): Promise<{ success: boolean; 
     // Create personalized tutorial tasks
     const personalizedTasks = [
       {
-        title: `👋 Welcome to Effecto TaskFlow, ${username}!`,
+        title: `👋 Welcome to TaskFlow AI, ${username}!`,
         description: `Let's get you started! This board is your new productivity hub.\n\n- [ ] **Explore the Dashboard**: Notice the 'Pending', 'In Progress', and 'Completed' columns. These help you organize your work.\n- [ ] **Drag this Task**: Click and hold this task, then drag it to the 'In Progress' column to see how easy it is to update status.`,
         priority: "high" as const,
         deadline: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
@@ -103,7 +103,7 @@ async function createTutorialTasks(userId: string): Promise<{ success: boolean; 
       },
       {
         title: `🎉 You're All Set, ${username}!`,
-        description: "You've learned the basics of Effecto TaskFlow! Feel free to explore other features like the Account and Settings pages (accessible from the sidebar). You can delete these tutorial tasks once you're comfortable (click a task to see details, then find the delete option).\n\nHappy tasking!",
+        description: "You've learned the basics of TaskFlow AI! Feel free to explore other features like the Account and Settings pages (accessible from the sidebar). You can delete these tutorial tasks once you're comfortable (click a task to see details, then find the delete option).\n\nHappy tasking!",
         priority: "low" as const,
         deadline: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000).toISOString(),
       }
@@ -228,7 +228,7 @@ export async function restartTutorial(userId: string, shouldRevalidate: boolean 
     
     // Create personalized tutorial task titles for deletion
     const personalizedTitles = [
-      `👋 Welcome to Effecto TaskFlow, ${username}!`,
+      `👋 Welcome to TaskFlow AI, ${username}!`,
       "➕ Create Your First Real Task",
       "🔍 Explore Task Details & Checklists",
       "🤖 Use AI Task Decomposition",

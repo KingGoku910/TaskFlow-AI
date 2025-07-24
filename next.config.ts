@@ -10,9 +10,8 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     // Keep Webpack config as fallback for now
-    forceSwcTransforms: true,
   },
-  turbopack: true,
+  turbopack: {},
   async headers() {
     return [
       {
@@ -43,49 +42,47 @@ const nextConfig: NextConfig = {
     ],
   },
   webpack: (config, { isServer }) => {
+    // Exclude Node.js modules from client bundle
     if (!isServer) {
-      // Prevent Node.js modules from being bundled in the client
       config.resolve.fallback = {
         ...config.resolve.fallback,
-        async_hooks: false,
         fs: false,
         net: false,
         tls: false,
         crypto: false,
-        stream: false,
+        path: false,
+        os: false,
+        util: false,
         url: false,
-        zlib: false,
+        async_hooks: false,
+        perf_hooks: false,
+        inspector: false,
+        worker_threads: false,
+        child_process: false,
+        dns: false,
         http: false,
         https: false,
-        assert: false,
-        os: false,
-        path: false,
-        child_process: false,
-        module: false,
+        zlib: false,
+        stream: false,
+        buffer: require.resolve('buffer'),
       };
       
-      // More comprehensive external marking for client bundles
-      config.externals = config.externals || [];
-      config.externals.push({
-        '@opentelemetry/sdk-trace-node': 'commonjs @opentelemetry/sdk-trace-node',
-        '@opentelemetry/context-async-hooks': 'commonjs @opentelemetry/context-async-hooks',
-        '@opentelemetry/api': 'commonjs @opentelemetry/api',
-        '@opentelemetry/core': 'commonjs @opentelemetry/core',
-        '@genkit-ai/ai': 'commonjs @genkit-ai/ai',
-        '@genkit-ai/core': 'commonjs @genkit-ai/core',
-        '@genkit-ai/googleai': 'commonjs @genkit-ai/googleai',
-        'genkit': 'commonjs genkit',
-      });
+      // Exclude OpenTelemetry packages from client bundle
+      config.externals = [
+        ...(config.externals || []),
+        {
+          '@opentelemetry/api': '@opentelemetry/api',
+          '@opentelemetry/context-async-hooks': '@opentelemetry/context-async-hooks',
+          '@opentelemetry/sdk-trace-node': '@opentelemetry/sdk-trace-node',
+          '@opentelemetry/sdk-node': '@opentelemetry/sdk-node',
+          '@genkit-ai/core': '@genkit-ai/core',
+          'genkit': 'genkit',
+        },
+      ];
     }
+    
     return config;
   },
-  serverExternalPackages: [
-    '@opentelemetry/sdk-trace-node',
-    '@opentelemetry/context-async-hooks',
-    '@genkit-ai/ai',
-    '@genkit-ai/core',
-    '@genkit-ai/googleai',
-  ],
 };
 
 export default nextConfig;

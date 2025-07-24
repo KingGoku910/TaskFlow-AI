@@ -8,7 +8,7 @@ import { KanbanBoard } from '@/components/dashboard/kanban-board';
 import { TaskDecompositionTool } from '@/components/dashboard/task-decomposition-tool';
 import { AddTaskForm } from '@/components/dashboard/add-task-form';
 import type { Task, Subtask as DecomposedSubtask } from '@/types/task';
-import { Plus, Loader2, AlertTriangle, Trash2 as TrashIcon } from 'lucide-react';
+import { Plus, Loader2, AlertTriangle, Trash2 as TrashIcon, Archive } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -27,6 +27,8 @@ import {
     updateTask,
     deleteTask,
     deleteMultipleTasks,
+    archiveTask,
+    archiveMultipleTasks,
 } from '@/app/dashboard/tasks/actions';
 
 interface DashboardClientProps {
@@ -40,6 +42,7 @@ export default function DashboardClientContent({ initialTasks, userId, pageError
     const [isAddTaskDialogOpen, setIsAddTaskDialogOpen] = useState(false);
     const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>([]);
     const [isDeleting, startDeleteTransition] = useTransition();
+    const [isArchiving, startArchiveTransition] = useTransition();
 
     const { toast } = useToast();
     const router = useRouter(); // Get router instance
@@ -167,6 +170,25 @@ export default function DashboardClientContent({ initialTasks, userId, pageError
         }
     };
 
+    const handleArchiveTask = async (taskId: string) => {
+        if (!userId) return;
+        const taskToArchive = tasks.find(t => t.id === taskId);
+        if (!taskToArchive) return;
+
+        try {
+            await archiveTask(taskId);
+            // Optimistic update (remove from view since we only show non-archived tasks)
+            setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+            setSelectedTaskIds((prev) => prev.filter(id => id !== taskId));
+            router.refresh(); // Trigger revalidation
+
+            toast({ title: "Task Archived", description: `"${taskToArchive.title}" has been archived.` });
+        } catch (error) {
+            console.error('Archive task error:', error);
+            toast({ title: "Error", description: "Failed to archive task.", variant: "destructive" });
+        }
+    };
+
     const handleDecomposedTasks = async (decomposedSubtasks: DecomposedSubtask[]) => {
         if (!userId) return;
         
@@ -249,6 +271,32 @@ export default function DashboardClientContent({ initialTasks, userId, pageError
         });
     };
 
+    const handleArchiveSelectedTasks = () => {
+        if (!userId || selectedTaskIds.length === 0) return;
+        startArchiveTransition(async () => {
+            try {
+                await archiveMultipleTasks(selectedTaskIds);
+                
+                // Optimistic update (remove from view since we only show non-archived tasks)
+                setTasks((prevTasks) => prevTasks.filter((task) => !selectedTaskIds.includes(task.id)));
+                router.refresh(); // Trigger revalidation
+
+                toast({ 
+                    title: "Tasks Archived", 
+                    description: `${selectedTaskIds.length} tasks have been archived.` 
+                });
+                setSelectedTaskIds([]);
+            } catch (error) {
+                console.error('Archive multiple tasks error:', error);
+                toast({ 
+                    title: "Error Archiving Tasks", 
+                    description: "Failed to archive selected tasks.", 
+                    variant: "destructive" 
+                });
+            }
+        });
+    };
+
      if (pageError) {
         const isDatabaseError = pageError.includes('Database tables not set up');
         
@@ -286,21 +334,40 @@ export default function DashboardClientContent({ initialTasks, userId, pageError
             <div id="dashboard-header-section" className="dashboard-header-section flex justify-between items-center gap-4 flex-wrap">
                 <div id="dashboard-actions" className="dashboard-actions flex items-center gap-2">
                     {selectedTaskIds.length > 0 && (
-                        <Button
-                            id="delete-selected-tasks-button"
-                            className="delete-selected-tasks-button"
-                            variant="destructive"
-                            onClick={handleDeleteSelectedTasks}
-                            disabled={isDeleting}
-                        >
-                            {isDeleting ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            ) : (
-                                <TrashIcon className="mr-2 h-4 w-4" />
-                            )}
-                            Delete ({selectedTaskIds.length})
-                        </Button>
+                        <>
+                            <Button
+                                id="archive-selected-tasks-button"
+                                className="archive-selected-tasks-button"
+                                variant="outline"
+                                onClick={handleArchiveSelectedTasks}
+                                disabled={isArchiving}
+                            >
+                                {isArchiving ? (
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                ) : (
+                                    <Archive className="mr-2 h-4 w-4" />
+                                )}
+                                Archive ({selectedTaskIds.length})
+                            </Button>
+                            <Button
+                                id="delete-selected-tasks-button"
+                                className="delete-selected-tasks-button"
+                                variant="destructive"
+                                onClick={handleDeleteSelectedTasks}
+                                disabled={isDeleting}
+                            >
+                                {isDeleting ? (
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                ) : (
+                                    <TrashIcon className="mr-2 h-4 w-4" />
+                                )}
+                                Delete ({selectedTaskIds.length})
+                            </Button>
+                        </>
                     )}
+                </div>
+                <div className="dashboard-tools flex items-center gap-2">
+                    {/* Archive functionality moved to task decomposition tool */}
                 </div>
             </div>
 
@@ -319,6 +386,7 @@ export default function DashboardClientContent({ initialTasks, userId, pageError
                     onTaskStatusChange={handleUpdateTaskStatus}
                     onUpdateTask={handleUpdateTask}
                     onDeleteTask={handleDeleteTask}
+                    onArchiveTask={handleArchiveTask}
                     selectedTaskIds={selectedTaskIds}
                     onTaskSelectionChange={handleTaskSelectionChange}
                 />

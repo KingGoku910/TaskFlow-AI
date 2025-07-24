@@ -1,4 +1,4 @@
-# Effecto TaskFlow 🚀
+# TaskFlow AI 🚀
 
 **AI-powered productivity suite with meeting summaries, task management, and comprehensive billing system**
 
@@ -85,8 +85,8 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/Innova-TEX-AI-Effecto-TaskFlow.git
-   cd Innova-TEX-AI-Effecto-TaskFlow
+   git clone https://github.com/your-username/Innova-TEX-AI-TaskFlow AI.git
+   cd Innova-TEX-AI-TaskFlow AI
    ```
 
 2. **Install dependencies**
@@ -185,7 +185,7 @@ This project is licensed under a Custom Commercial License - see the [LICENSE](L
 ## 📞 Support
 
 - 📧 Email: support@innova-tex.com
-- 🐛 Issues: [GitHub Issues](https://github.com/your-username/Innova-TEX-AI-Effecto-TaskFlow/issues)
+- 🐛 Issues: [GitHub Issues](https://github.com/your-username/Innova-TEX-AI-TaskFlow AI/issues)
 - 📖 Documentation: [Full Docs](docs/)
 
 ---

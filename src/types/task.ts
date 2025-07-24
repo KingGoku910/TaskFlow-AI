@@ -1,4 +1,4 @@
-export type TaskStatus = 'todo' | 'in_progress' | 'completed' | 'archived';
+export type TaskStatus = 'todo' | 'pending' | 'in_progress' | 'completed';
 export type TaskPriority = 'low' | 'medium' | 'high';
 
 export interface Task {
@@ -12,6 +12,7 @@ export interface Task {
   updatedAt: string;
   completedAt?: string; // ISO string format for when task was completed
   archivedAt?: string; // ISO string format for when task was archived
+  isArchived?: boolean; // Whether this task is archived
   parentTaskId?: string; // ID of parent task if this is a subtask
   isDecomposed?: boolean; // Whether this task was created from decomposition
   originalTaskId?: string; // ID of original task if this was decomposed

@@ -66,7 +66,7 @@ export function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
             <Sparkles className="h-8 w-8 text-primary" />
           </div>
           <CardTitle className="text-3xl font-bold flex items-center justify-center gap-2">
-            Welcome to Effecto TaskFlow! 
+            Welcome to TaskFlow AI! 
             <Badge variant="secondary" className="text-xs">
               🎉 NEW USER
             </Badge>

@@ -131,8 +131,8 @@ export default function LandingPage() {
       <header className="px-4 lg:px-6 h-16 flex items-center border-b bg-background shadow-sm sticky top-0 z-50">
         <Link href="/" className="flex items-center justify-center" prefetch={false}>
           <AppLogoSvg className="h-7 w-7 text-primary" />
-          <LdgSpan className="sr-only">Effecto TaskFlow</LdgSpan>
-          <LdgSpan className="ml-2 text-xl font-bold text-foreground">Effecto TaskFlow</LdgSpan>
+          <LdgSpan className="sr-only">TaskFlow AI</LdgSpan>
+          <LdgSpan className="ml-2 text-xl font-bold text-foreground">TaskFlow AI</LdgSpan>
         </Link>
         <nav className="ml-auto flex gap-2 sm:gap-4 items-center">
           <Link href="#features" className="text-sm font-medium hover:underline underline-offset-4 text-muted-foreground" prefetch={false}>

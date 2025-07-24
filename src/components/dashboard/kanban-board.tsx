@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -8,7 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox'; // Import Checkbox
 import { Button } from '@/components/ui/button'; // Import Button
-import { Trash2, Edit } from 'lucide-react'; // Import Trash icon
+import { Trash2, Edit, Archive } from 'lucide-react'; // Import Archive icon
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { TaskDetailDialog } from './task-detail-dialog';
@@ -20,17 +19,19 @@ interface KanbanBoardProps {
   onTaskStatusChange: (taskId: string, newStatus: TaskStatus) => void;
   onUpdateTask: (updatedTask: Task) => void;
   onDeleteTask: (taskId: string) => void; // Prop for deleting a single task
+  onArchiveTask?: (taskId: string) => void; // New prop for archiving a single task
   selectedTaskIds: string[]; // New prop for selected task IDs
   onTaskSelectionChange: (taskId: string, isSelected: boolean) => void; // New prop for selection change
 }
 
-const columns: TaskStatus[] = ['todo', 'in_progress', 'completed'];
+const columns: TaskStatus[] = ['todo', 'pending', 'in_progress', 'completed'];
 
 export function KanbanBoard({
   tasks,
   onTaskStatusChange,
   onUpdateTask,
   onDeleteTask,
+  onArchiveTask,
   selectedTaskIds,
   onTaskSelectionChange,
 }: KanbanBoardProps) {
@@ -91,9 +92,10 @@ export function KanbanBoard({
   // Helper function to get display name for status
   const getStatusDisplayName = (status: TaskStatus): string => {
     switch (status) {
-      case 'todo': return 'Pending';
+      case 'todo': return 'To Do';
       case 'in_progress': return 'In Progress';
       case 'completed': return 'Completed';
+      case 'pending': return 'Pending';
     }
   };
 
@@ -106,14 +108,27 @@ export function KanbanBoard({
     }
   };
 
+  const getColumnStyle = (status: TaskStatus): string => {
+    switch (status) {
+      case 'todo': return '#ff0000'; // Bright Red
+      case 'pending': return '#ff8c00'; // Bright Orange  
+      case 'in_progress': return '#00bfff'; // Electric Blue
+      case 'completed': return '#00ff00'; // Neon Green
+      default: return 'transparent';
+    }
+  };
+
   if (!isBrowser) {
     return null;
   }
 
   return (
-    <section id="kanban-board-container" className="kanban-board-container">
+    <section
+      id="kanban-board-container"
+      className="kanban-board-container lg:mb-10" // Add margin for large screens
+    >
       <DragDropContext onDragEnd={onDragEnd}>
-        <div id="kanban-columns" className="kanban-columns grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div id="kanban-columns" className="kanban-columns grid grid-cols-4 gap-4">
           {columns.map((status) => (
             <Droppable key={status} droppableId={status}>
               {(provided, snapshot) => (
@@ -122,13 +137,27 @@ export function KanbanBoard({
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                   data-status={getStatusDataAttribute(status)}
+                  style={{
+                    borderColor: getColumnStyle(status),
+                    backgroundColor: 'rgba(20, 184, 166, 0.1)', // Transparent teal background
+                    boxShadow: `0 4px 6px ${getColumnStyle(status)}30`,
+                  }}
                   className={cn(
-                    "kanban-column bg-muted/50 p-4 rounded-lg border border-dashed transition-colors duration-200",
+                    "kanban-column p-4 rounded-lg border-t-2 border-l-1 border-r-1 border-b-1 border-t-solid border-l-dashed border-r-dashed border-b-dashed transition-colors duration-200",
                     `column-${status.toLowerCase().replace(/\s+/g, '-')}`,
-                    snapshot.isDraggingOver ? 'bg-accent border-primary dragging-over' : 'border-gray-200 dark:!border-[var(--sidebar-accent)]'
+                    snapshot.isDraggingOver ? 'bg-accent border-primary dragging-over' : ''
                   )}
                 >
-                  <h2 id={`column-title-${status.toLowerCase().replace(/\s+/g, '-')}`} className="kanban-header column-title text-lg font-semibold mb-4 text-foreground capitalize">{getStatusDisplayName(status)}</h2>
+                  <h2 
+                    id={`column-title-${status.toLowerCase().replace(/\s+/g, '-')}`} 
+                    className="kanban-header column-title text-lg font-semibold mb-4 capitalize text-white rounded-lg px-3 py-2"
+                    style={{ 
+                      background: `linear-gradient(135deg, ${getColumnStyle(status)} 0%, rgba(255,255,255,0.1) 70%, transparent 100%)`,
+                      backgroundImage: `linear-gradient(135deg, ${getColumnStyle(status)} 0%, rgba(255,255,255,0.1) 70%, transparent 100%)`
+                    }}
+                  >
+                    {getStatusDisplayName(status)}
+                  </h2>
                   <div className={`task-list space-y-3 min-h-[200px] tasks-${status.toLowerCase().replace(/\s+/g, '-')}`}>
                     {tasks
                       .filter((task) => task.status === status)
@@ -158,30 +187,45 @@ export function KanbanBoard({
                                   isEditing={true}
                                 />
                               ) : (
-                                <Card className={cn(
-                                  "task-card bg-card hover:bg-card/90 cursor-pointer relative",
-                                  { 'ring-2 ring-primary ring-offset-2 ring-offset-background': snapshotDraggable.isDragging }
-                                )}
-                                data-status={getStatusDataAttribute(status)}
+                                <Card 
+                                  className={cn(
+                                    "task-card bg-card hover:bg-card/90 cursor-pointer relative rounded-lg overflow-hidden",
+                                    { 'ring-2 ring-primary ring-offset-2 ring-offset-background': snapshotDraggable.isDragging }
+                                  )}
+                                  data-status={getStatusDataAttribute(status)}
+                                  style={{
+                                    borderLeft: `4px solid ${getColumnStyle(status)}`,
+                                    boxShadow: `0 2px 4px ${getColumnStyle(status)}20`,
+                                    borderRadius: '8px',
+                                    borderTop: 'none',
+                                    borderRight: 'none',
+                                    borderBottom: 'none'
+                                  }}
                                 >
                                 <CardHeader className="task-card-header p-4 pb-2 pr-12">
-                                  <div
-                                    data-no-dialog-open="true"
-                                    className="task-checkbox-container absolute top-3 right-3 z-10"
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    <Checkbox
-                                      id={`select-task-${task.id}`}
-                                      className="task-selection-checkbox"
-                                      checked={selectedTaskIds.includes(task.id)}
-                                      onCheckedChange={(checked) => onTaskSelectionChange(task.id, !!checked)}
-                                      aria-labelledby={`task-title-${task.id}`}
-                                    />
-                                  </div>
                                   <div className="task-header-content flex justify-between items-start gap-2">
-                                    <CardTitle id={`task-title-${task.id}`} className="task-title text-base font-medium text-card-foreground">{task.title}</CardTitle>
-                                    <Badge variant={getPriorityBadgeVariant(task.priority)} className={`priority-badge priority-${task.priority.toLowerCase()} text-xs shrink-0`}>{task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</Badge>
+                                    <Badge
+                                      variant={getPriorityBadgeVariant(task.priority)}
+                                      className={`priority-badge priority-${task.priority.toLowerCase()} text-xs shrink-0`}
+                                      style={{ backgroundColor: getPriorityBadgeVariant(task.priority) === 'destructive' ? '#ef4444' : getPriorityBadgeVariant(task.priority) === 'secondary' ? '#f59e0b' : '#10b981' }}
+                                    >
+                                      {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                                    </Badge>
+                                    <div
+                                      data-no-dialog-open="true"
+                                      className="task-checkbox-container z-10"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <Checkbox
+                                        id={`select-task-${task.id}`}
+                                        className="task-selection-checkbox"
+                                        checked={selectedTaskIds?.includes(task.id) || false} // Ensure boolean value
+                                        onCheckedChange={(checked) => onTaskSelectionChange(task.id, !!checked)}
+                                        aria-labelledby={`task-title-${task.id}`}
+                                      />
+                                    </div>
                                   </div>
+                                  <CardTitle id={`task-title-${task.id}`} className="task-title text-base font-medium text-card-foreground">{task.title}</CardTitle>
                                   <CardDescription className="task-deadline text-xs text-muted-foreground pt-1">
                                     Deadline: {task.deadline ? format(new Date(task.deadline), 'PP') : 'N/A'}
                                   </CardDescription>
@@ -209,6 +253,20 @@ export function KanbanBoard({
                                     >
                                       <Edit className="h-4 w-4" />
                                     </Button>
+                                    {task.status === 'completed' && onArchiveTask && (
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-7 w-7 text-muted-foreground hover:text-blue-500"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          onArchiveTask(task.id);
+                                        }}
+                                        aria-label={`Archive task ${task.title}`}
+                                      >
+                                        <Archive className="h-4 w-4" />
+                                      </Button>
+                                    )}
                                     <Button
                                       id={`delete-task-${task.id}`}
                                       variant="ghost"
@@ -245,6 +303,7 @@ export function KanbanBoard({
         onOpenChange={handleDialogClose}
         onUpdateTask={handleDialogUpdateTask}
       />
+      
     </section>
   );
 }

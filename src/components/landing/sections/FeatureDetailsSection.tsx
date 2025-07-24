@@ -91,7 +91,7 @@ export function FeatureDetailsSection() {
       svg: <TaskManagementDetailSvg />,
       badgeText: "Efficient Organization",
       title: "All-in-One Task Management",
-      description: "Beyond decomposition and Kanban, Effecto TaskFlow offers robust task management. Add, edit, and delete tasks, assign priorities, set deadlines, and write detailed descriptions with markdown support for checklists and formatting.",
+      description: "Beyond decomposition and Kanban, TaskFlow AI offers robust task management. Add, edit, and delete tasks, assign priorities, set deadlines, and write detailed descriptions with markdown support for checklists and formatting.",
       listItems: [
         "Create tasks manually with titles, descriptions, priorities, and deadlines.",
         "Edit any task detail at any time.",
@@ -144,7 +144,7 @@ export function FeatureDetailsSection() {
       <LdgDiv className="container mx-auto px-4 md:px-6">
         <LdgDiv className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
           <LdgHeading2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-foreground">
-            Dive Deeper into <LdgSpan className="text-primary">Effecto TaskFlow</LdgSpan>
+            Dive Deeper into <LdgSpan className="text-primary">TaskFlow AI</LdgSpan>
           </LdgHeading2>
           <LdgParagraph className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-foreground/80">
             Discover how our core features can revolutionize your productivity and project management.

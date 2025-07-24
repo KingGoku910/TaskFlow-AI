@@ -25,11 +25,12 @@ export default async function TasksPage() {
       pageError = `Failed to set up user profile: ${profileResult.error}`;
     }
 
-    // Fetch tasks for the user
+    // Fetch tasks for the user (excluding archived tasks)
     const { data: tasks, error: tasksError } = await supabase
       .from('tasks')
       .select('*')
       .eq('user_id', user.id)
+      .eq('is_archived', false) // Only get non-archived tasks
       .order('created_at', { ascending: false });
 
     if (tasksError) {
@@ -44,11 +45,11 @@ export default async function TasksPage() {
   }
 
   return (
-    <div className="tasks-page-container space-y-6">
+    <div className="tasks-page-container space-y-1">
       <DashboardPageHeader
         title="Task Management Dashboard"
         description="Organize and track your tasks with our intuitive Kanban board system."
-        icon={<ClipboardList className="h-6 w-6" />}
+        icon={<ClipboardList className="h-8 w-8" />}
       />
       
       <Suspense fallback={<div>Loading tasks...</div>}>

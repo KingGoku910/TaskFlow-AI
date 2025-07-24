@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 import { createSubscriptionService } from '@/services/subscription';
 import { rateLimitMiddleware } from '@/middleware/rate-limit';
 
-// Fetch tasks for authenticated user
+// Fetch tasks for authenticated user (excluding archived)
 export async function getTasks() {
   const supabase = await createClient();
   
@@ -20,10 +20,50 @@ export async function getTasks() {
     .from('tasks')
     .select('*')
     .eq('user_id', user.id)
+    .eq('is_archived', false) // Only get non-archived tasks
     .order('created_at', { ascending: false });
     
-  if (error) throw error;
-  return data;
+  if (error) {
+    console.error('Error in getTasks:', error);
+    throw error;
+  }
+  
+  return data || [];
+}
+
+// Fetch archived tasks for authenticated user (with fallback for missing is_archived column)
+export async function getArchivedTasks() {
+  const supabase = await createClient();
+  
+  // Get authenticated user
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) {
+    redirect('/auth');
+  }
+
+  try {
+    // Try to query with is_archived filter first
+    const { data, error } = await supabase
+      .from('tasks')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('is_archived', true)
+      .order('archived_at', { ascending: false });
+      
+    if (error) {
+      // If error might be due to missing is_archived column, return empty array
+      if (error.message?.includes('is_archived') || error.message?.includes('archived_at') || error.code === '42703') {
+        console.log('Archiving columns not found, returning empty array');
+        return [];
+      }
+      throw error;
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Error in getArchivedTasks:', error);
+    return []; // Return empty array as fallback
+  }
 }
 
 // Add a new task
@@ -65,7 +105,7 @@ export async function addTask(formData: FormData) {
       throw new Error('Valid priority is required');
     }
 
-    if (!status || !['todo', 'in_progress', 'completed', 'archived'].includes(status)) {
+    if (!status || !['todo', 'pending', 'in_progress', 'completed'].includes(status)) {
       throw new Error('Valid status is required');
     }
 
@@ -254,7 +294,7 @@ export async function deleteMultipleTasks(taskIds: string[]) {
   revalidatePath('/dashboard/tasks');
 }
 
-// Archive a task
+// Archive a task (manual archiving)
 export async function archiveTask(taskId: string) {
   try {
     const supabase = await createClient();
@@ -276,12 +316,12 @@ export async function archiveTask(taskId: string) {
     const { data, error } = await supabase
       .from('tasks')
       .update({
-        status: 'archived',
+        is_archived: true,
         archived_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       })
       .eq('id', taskId)
-      .eq('user_id', user.id) // Ensure user can only archive their own tasks
+      .eq('user_id', user.id)
       .select()
       .single();
       
@@ -299,6 +339,51 @@ export async function archiveTask(taskId: string) {
   }
 }
 
+// Unarchive a task (restore from archive)
+export async function unarchiveTask(taskId: string) {
+  try {
+    const supabase = await createClient();
+    
+    // Get authenticated user
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      console.error('Authentication error in unarchiveTask:', userError);
+      redirect('/auth');
+    }
+
+    // Validate taskId
+    if (!taskId || typeof taskId !== 'string') {
+      throw new Error('Invalid task ID provided');
+    }
+
+    console.log('Unarchiving task:', taskId);
+
+    const { data, error } = await supabase
+      .from('tasks')
+      .update({
+        is_archived: false,
+        archived_at: null,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', taskId)
+      .eq('user_id', user.id) // Ensure user can only unarchive their own tasks
+      .select()
+      .single();
+      
+    if (error) {
+      console.error('Database error in unarchiveTask:', error);
+      throw error;
+    }
+    
+    console.log('Task unarchived successfully:', data);
+    revalidatePath('/dashboard/tasks');
+    return data;
+  } catch (error) {
+    console.error('Error in unarchiveTask server action:', error);
+    throw error;
+  }
+}
+
 // Archive multiple tasks
 export async function archiveMultipleTasks(taskIds: string[]) {
   const supabase = await createClient();
@@ -312,20 +397,20 @@ export async function archiveMultipleTasks(taskIds: string[]) {
   const { error } = await supabase
     .from('tasks')
     .update({
-      status: 'archived',
+      is_archived: true,
       archived_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     })
     .in('id', taskIds)
-    .eq('user_id', user.id); // Ensure user can only archive their own tasks
+    .eq('user_id', user.id);
     
   if (error) throw error;
   
   revalidatePath('/dashboard/tasks');
 }
 
-// Auto-archive completed tasks older than specified days
-export async function autoArchiveCompletedTasks(daysThreshold: number = 30) {
+// Auto-archive completed tasks older than specified days (24 hours = 1 day for your use case)
+export async function autoArchiveCompletedTasks(daysThreshold: number = 1) {
   const supabase = await createClient();
   
   // Get authenticated user
@@ -341,14 +426,14 @@ export async function autoArchiveCompletedTasks(daysThreshold: number = 30) {
   const { data, error } = await supabase
     .from('tasks')
     .update({
-      status: 'archived',
+      is_archived: true,
       archived_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     })
     .eq('user_id', user.id)
     .eq('status', 'completed')
-    .lt('completed_at', cutoffDate.toISOString())
-    .is('archived_at', null);
+    .eq('is_archived', false) // Only archive non-archived completed tasks
+    .lt('updated_at', cutoffDate.toISOString()); // Use updated_at since completed_at may not exist
     
   if (error) {
     console.error('Error auto-archiving tasks:', error);

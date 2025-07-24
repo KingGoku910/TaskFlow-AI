@@ -77,7 +77,7 @@ export function FooterSection() {
           <LdgDiv>
             <Link href="/" className="flex items-center mb-4" prefetch={false}>
               <AppLogoSvg className="h-7 w-7 text-primary" />
-              <LdgSpan className="ml-2 text-xl font-bold text-foreground">Effecto TaskFlow</LdgSpan>
+              <LdgSpan className="ml-2 text-xl font-bold text-foreground">TaskFlow AI</LdgSpan>
             </Link>
             <LdgParagraph className="text-sm dark:text-foreground/80">Transforming ideas into actionable tasks with the power of AI.</LdgParagraph>
           </LdgDiv>
@@ -95,7 +95,7 @@ export function FooterSection() {
           ))}
         </LdgDiv>
         <LdgDiv className="mt-8 pt-8 border-t border-gray-200/50 dark:border-[var(--sidebar-accent)] dark:hover:border-[var(--sidebar-accent-hov)] flex flex-col sm:flex-row justify-between items-center">
-          <LdgParagraph className="text-xs dark:text-foreground/70">&copy; {currentYear} Effecto TaskFlow. All rights reserved.</LdgParagraph>
+          <LdgParagraph className="text-xs dark:text-foreground/70">&copy; {currentYear} TaskFlow AI. All rights reserved.</LdgParagraph>
           <LdgDiv className="flex space-x-4 mt-4 sm:mt-0">
             {socialLinks.map(social => (
                <SocialIconLink key={social.label} href={social.href} label={social.label}>

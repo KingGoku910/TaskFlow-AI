@@ -18,7 +18,7 @@ export function CtaSection() {
             Ready to Boost Your Productivity?
           </LdgHeading2>
           <LdgParagraph className="max-w-[700px] text-primary-foreground/80 md:text-xl">
-            Join Effecto TaskFlow today and transform your workflow from chaotic to clear. Sign up for free and experience the power of AI-driven task management.
+            Join TaskFlow AI today and transform your workflow from chaotic to clear. Sign up for free and experience the power of AI-driven task management.
           </LdgParagraph>
           <Link href="/dashboard" prefetch={false}>
             <Button size="lg" variant="secondary" className="bg-background text-primary hover:bg-background/90 dark:bg-foreground dark:text-background dark:hover:bg-foreground/90">

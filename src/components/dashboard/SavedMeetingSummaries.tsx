@@ -25,13 +25,15 @@ import {
   RefreshCw,
   Download,
   List,
-  LayoutGrid
+  LayoutGrid,
+  Tag
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { createClient } from '@/utils/supabase/client';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import type { MeetingSummary } from '@/types/meeting';
+import { EnhancedAudioPlayer } from '@/components/ui/enhanced-audio-player';
 
 interface SavedMeetingSummariesProps {
   onCreateTask?: (actionItems: string[], meetingTitle: string) => void;
@@ -415,37 +417,22 @@ Generated on ${new Date().toLocaleDateString()}`;
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-6 mt-4">
-            {/* Audio Player Section */}
+            {/* Enhanced Audio Player Section */}
             {selectedSummary?.audio_url && (
-              <div className="bg-accent text-accent-foreground rounded-lg p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => toggleAudioPlayback(selectedSummary.id, selectedSummary.audio_url!)}
-                      className="text-blue-600 hover:text-blue-800"
-                    >
-                      {playingAudio === selectedSummary.id ? (
-                        <Pause className="h-4 w-4" />
-                      ) : (
-                        <Play className="h-4 w-4" />
-                      )}
-                    </Button>
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium">Meeting Audio Recording</span>
-                      <span className="text-xs text-muted-foreground">
-                        {selectedSummary.duration ? formatDuration(selectedSummary.duration) : 'Duration unknown'}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Volume2 className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">
-                      {playingAudio === selectedSummary.id ? 'Playing...' : 'Ready to play'}
-                    </span>
-                  </div>
-                </div>
+              <div className="space-y-3">
+                <h4 className="font-medium">Meeting Audio Recording</h4>
+                <EnhancedAudioPlayer
+                  audioSrc={selectedSummary.audio_url}
+                  title={selectedSummary.title}
+                  showDownload={true}
+                  onTimeUpdate={(currentTime, duration) => {
+                    // You can add transcript sync here if available
+                    console.log(`Playback: ${currentTime}/${duration}`);
+                  }}
+                  onEnded={() => {
+                    console.log('Audio playback ended');
+                  }}
+                />
               </div>
             )}
 
@@ -545,9 +532,9 @@ Generated on ${new Date().toLocaleDateString()}`;
   );
 
   const renderListView = () => (
-    <div className="space-y-4">
+  <div className="space-y-4">
       {filteredSummaries.map((summary) => (
-        <div key={summary.id} className="border rounded-lg p-4 space-y-3 w-full max-w-[90%]">
+  <div key={summary.id} className="border rounded-lg p-4 space-y-3 w-full max-w-[90%]" style={{ boxShadow: '0 0 8px 2px var(--tw-shadow-accent, #0ff)', overflow: 'visible' }}>
           <div className="flex items-start justify-between w-full">
             <div className="flex-1 min-w-0">
               <h3 className="font-medium text-lg truncate">{summary.title}</h3>
@@ -625,88 +612,97 @@ Generated on ${new Date().toLocaleDateString()}`;
   );
 
   const renderGridView = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
       {filteredSummaries.map((summary) => (
-        <div key={summary.id} className="border rounded-lg p-4 space-y-3 hover:shadow-md transition-shadow">
+        <div
+          key={summary.id}
+          className="border rounded-lg p-4 space-y-3 hover:shadow-lg transition-shadow"
+          style={{
+            boxShadow: '0 0 8px 2px var(--tw-shadow-accent, #0ff)',
+            overflow: 'visible',
+            outline: '2px solid transparent',
+            outlineOffset: '4px',
+          }}
+        >
           {/* Icon Thumbnail */}
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-lg bg-accent flex items-center justify-center text-white">
+            <div className="w-10 h-10 rounded-md bg-accent flex items-center justify-center text-white">
               <FileText className="h-5 w-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <h4 className="font-medium text-base truncate">{summary.title}</h4>
-              <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                <Calendar className="h-3 w-3" />
-                {summary.meeting_date 
-                  ? new Date(summary.meeting_date).toLocaleDateString()
-                  : new Date(summary.created_at).toLocaleDateString()
-                }
-              </div>
+              <h3 className="text-sm font-medium truncate">{summary.title}</h3>
+              <p className="text-xs text-muted-foreground truncate">
+                {new Date(summary.meeting_date).toLocaleDateString()}
+              </p>
             </div>
           </div>
-          
-          {/* Preview Content */}
-          <div className="bg-muted/30 rounded-md p-3 min-h-[100px] text-sm">
-            <div className="line-clamp-4 text-muted-foreground">
-              {generateThumbnail(summary.summary)}
+
+          {/* Summary Text with Background */}
+          <div style={{ backgroundColor: "#002b36", padding: "12px", borderRadius: "8px", marginBottom: "12px" }}>
+            <div className="text-sm text-gray-100 line-clamp-3">
+              {summary.summary}
             </div>
           </div>
-          
+
           {/* Metadata */}
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            {summary.participants && summary.participants.length > 0 && (
-              <>
-                <div className="flex items-center gap-1">
-                  <Users className="h-3 w-3" />
-                  {summary.participants.length}
-                </div>
-                <Separator orientation="vertical" className="h-3" />
-              </>
-            )}
-            {summary.duration && (
-              <>
-                <div className="flex items-center gap-1">
-                  <Timer className="h-3 w-3" />
-                  {formatDuration(summary.duration)}
-                </div>
-                <Separator orientation="vertical" className="h-3" />
-              </>
-            )}
+          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+            <div className="flex items-center gap-1">
+              <Timer className="h-3 w-3" />
+              <span>{formatDuration(summary.duration)}</span>
+            </div>
+            <div className="h-3 w-px bg-gray-500"></div>
+            <div className="flex items-center gap-1">
+              <Users className="h-3 w-3" />
+              <span>{summary.participants?.length || 0} participants</span>
+            </div>
             {summary.language && (
-              <div className="flex items-center gap-1">
-                <span>🗣️</span>
-                <span>{summary.language}</span>
-              </div>
+              <>
+                <div className="h-3 w-px bg-gray-500"></div>
+                <div className="flex items-center gap-1 text-xs">
+                  <span>🗣️</span>
+                  <span>{summary.language}</span>
+                </div>
+              </>
             )}
           </div>
-          
-          {/* Participants */}
-          {summary.participants && summary.participants.length > 0 && (
-            <div className="flex flex-wrap gap-1">
-              {summary.participants.slice(0, 3).map((participant, index) => (
-                <Badge key={index} variant="secondary" className="text-xs">
-                  {participant}
-                </Badge>
-              ))}
-              {summary.participants.length > 3 && (
-                <Badge variant="outline" className="text-xs">
-                  +{summary.participants.length - 3}
-                </Badge>
-              )}
-            </div>
-          )}
-          
-          {/* Action items indicator */}
-          {summary.action_items && summary.action_items.length > 0 && (
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <CheckSquare className="h-3 w-3" />
-              {summary.action_items.length} action items
-            </div>
-          )}
-          
-          {/* Actions */}
-          <div className="flex items-center justify-center gap-1 pt-2 border-t mt-auto">
-            {renderSummaryActions(summary)}
+
+          {/* Separator line that doesn't touch sides */}
+          <div className="border-t border-border mx-4 mb-3"></div>
+
+          {/* Action Buttons */}
+          <div className="flex items-center justify-between gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 text-blue-400 hover:text-blue-600"
+              title="Play audio"
+            >
+              <Volume2 className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0"
+              title="View details"
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0"
+              title="Download summary"
+            >
+              <Download className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0"
+              title="Delete summary"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       ))}
@@ -755,7 +751,7 @@ Generated on ${new Date().toLocaleDateString()}`;
   }
 
   return (
-    <Card>
+    <Card className="mb-2 mr-4" style={{ overflow: 'visible' }}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <FileText className="h-5 w-5" />

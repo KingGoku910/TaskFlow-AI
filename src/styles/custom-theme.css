@@ -1,4 +1,4 @@
-/* Effecto TaskFlow - Custom Theme Variables */
+/* TaskFlow AI - Custom Theme Variables */
 /* These variables are dynamically updated via JavaScript when users change settings */
 
 :root {
@@ -6,6 +6,7 @@
   --kanban-todo-color: #07fc81; /* Teal for todo */
   --kanban-progress-color: #f59e0b; /* Amber for in progress */
   --kanban-completed-color: #0051ff; /* Emerald for completed */
+  --kanban-pending-color: #ffcc00; /* Yellow for pending */
   
   /* Theme Customization - Restored to original teal accent */
   --accent-color: #14b8a6; /* Teal accent to match original theme */
@@ -39,13 +40,12 @@
   background: linear-gradient(135deg, var(--kanban-completed-color) 10%, transparent);
 }
 
-/* Legacy support for pending status */
 .kanban-column[data-status="pending"] {
-  border-top: 3px solid var(--kanban-todo-color);
+  border-top: 3px solid var(--kanban-pending-color);
 }
 
 .kanban-column[data-status="pending"] .kanban-header {
-  background: linear-gradient(135deg, var(--kanban-todo-color) 10%, transparent);
+  background: linear-gradient(135deg, var(--kanban-pending-color) 10%, transparent);
 }
 
 /* Apply accent color to key UI elements */
@@ -127,20 +127,19 @@ body {
 }
 
 .task-card[data-status="todo"] {
-  border-left-color: var(--kanban-todo-color);
+  border-left: 3px solid var(--kanban-todo-color);
 }
 
 .task-card[data-status="in_progress"] {
-  border-left-color: var(--kanban-progress-color);
+  border-left: 3px solid var(--kanban-progress-color);
 }
 
 .task-card[data-status="completed"] {
-  border-left-color: var(--kanban-completed-color);
+  border-left: 3px solid var(--kanban-completed-color);
 }
 
-/* Legacy support for pending status */
 .task-card[data-status="pending"] {
-  border-left-color: var(--kanban-todo-color);
+  border-left: 3px solid var(--kanban-pending-color);
 }
 
 /* Priority indicators using custom colors */
@@ -266,9 +265,67 @@ html.dark .task-decomposition-section .w-full {
   border-color: var(--sidebar-accent) !important;
 }
 
-/* Override for Card component in dark mode */
+
+
+
+
+/* Neon shadow for main dashboard panels and .ui-card only (not all cards) */
+.dashboard-panel,
+.dashboard-main-panel,
+.dashboard-content-panel {
+  box-shadow: 0 0 12px 3px var(--accent-color, #14b8a6), 0 0 0 2px var(--accent-color, #14b8a6);
+  outline: 2px solid var(--accent-color, #14b8a6);
+  outline-offset: 0px;
+  overflow: visible !important;
+  border-radius: var(--border-radius, 8px);
+  margin: 16px;
+  z-index: 2;
+}
+
+.ui-card {
+  box-shadow: 0 0 12px 3px var(--accent-color, #14b8a6), 0 0 0 2px var(--accent-color, #14b8a6);
+  outline: 2px solid var(--accent-color, #14b8a6);
+  outline-offset: 0px;
+  overflow: visible !important;
+  border-radius: var(--border-radius, 8px);
+  z-index: 2;
+}
+
+
+
+/* Main panel vertical spacing only (do not affect sidebar width) */
+.dashboard-panel,
+.dashboard-main-panel,
+.dashboard-content-panel {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+/* Reduce gap between sidebar and main panels */
+.dashboard-panel,
+.dashboard-main-panel,
+.dashboard-content-panel {
+  margin-left: 8px;
+}
+
+/* Ensure sidebar is above background but below modals */
+.sidebar,
+[class*="sidebar"] {
+  z-index: 3;
+}
+
+/* Prevent main content from being flush with right edge */
+.dashboard-content-panel,
+.dashboard-main-panel {
+  margin-right: 24px;
+}
+
 html.dark [class*="card"]:not([class*="destructive"]):not([class*="error"]) {
   border-color: var(--sidebar-accent);
+  box-shadow: 0 0 16px 4px var(--sidebar-accent, #14b8a6), 0 0 0 2px var(--sidebar-accent, #14b8a6);
+  outline: 2px solid var(--sidebar-accent, #14b8a6);
+  outline-offset: 0px;
+  overflow: visible !important;
 }
 
 /* Ensure Dialog components use sidebar accent borders */
@@ -425,9 +482,9 @@ html.dark [data-sidebar="group-action"]::after {
   background-color: transparent !important;
 }
 
-html.dark [data-sidebar="menu-action"]::after {
+/* html.dark [data-sidebar="menu-action"]::after {
   background-color: transparent !important;
-}
+} */
 
 /* Fix hover states for sidebar border */
 html.dark [data-sidebar="rail"]:hover {

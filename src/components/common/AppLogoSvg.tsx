@@ -5,17 +5,17 @@ import { cn } from '@/lib/utils';
 export function AppLogoSvg(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
-      width="32"
-      height="32"
+      width="360"
+      height="360"
       viewBox="0 0 32 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      aria-label="Effecto TaskFlow Logo"
+      aria-label="TaskFlow AI Logo"
       role="img"
       {...props}
-      className={cn("h-7 w-7 text-primary", props.className)} // Default size & color, allow override
+      className={cn("h-[360px] w-[360px] text-primary", props.className)} // Default size & color, allow override
     >
-      <title>Effecto TaskFlow Logo - Task List, Checkmark, and AI Accent</title>
+      <title>TaskFlow AI Logo - Task List, Checkmark, and AI Accent</title>
       
       {/* Task list representation */}
       <line x1="6" y1="11" x2="14" y2="11" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"/>

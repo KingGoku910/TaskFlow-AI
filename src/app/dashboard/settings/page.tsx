@@ -61,9 +61,10 @@ export default function SettingsPage() {
         console.log('Settings: Preferences loading timeout, setting defaults');
         const defaultPreferences = {
           kanban: {
-            todoColor: '#14b8a6',
-            inProgressColor: '#f59e0b',
-            completedColor: '#10b981'
+            todoColor: '#f59e0b',
+            pendingColor: '#ffcc00', // Add yellow for pending
+            inProgressColor: '#10b981',
+            completedColor: '#14b8a6'
           },
           theme: {
             accentColor: '#14b8a6',
@@ -130,9 +131,10 @@ export default function SettingsPage() {
         // Set default preferences if loading fails
         const defaultPreferences = {
           kanban: {
-            todoColor: '#14b8a6',
-            inProgressColor: '#f59e0b',
-            completedColor: '#10b981'
+            todoColor: '#f59e0b',
+          pendingColor: '#ffcc00', // Add yellow for pending
+          inProgressColor: '#10b981', 
+          completedColor: '#14b8a6'
           },
           theme: {
             accentColor: '#14b8a6',
@@ -158,9 +160,10 @@ export default function SettingsPage() {
       // Set default preferences if there's an error
       const defaultPreferences = {
         kanban: {
-          todoColor: '#14b8a6',
-          inProgressColor: '#f59e0b', 
-          completedColor: '#10b981'
+          todoColor: '#f59e0b',
+          pendingColor: '#ffcc00', // Add yellow for pending
+          inProgressColor: '#10b981', 
+          completedColor: '#14b8a6'
         },
         theme: {
           accentColor: '#14b8a6',
@@ -227,7 +230,13 @@ export default function SettingsPage() {
     localStorage.setItem('theme', newTheme);
     document.documentElement.classList.toggle('dark', newTheme === 'dark');
     document.documentElement.classList.toggle('light', newTheme === 'light');
-    
+
+    // Update logo text color dynamically
+    const logo = document.getElementById('site-logo');
+    if (logo) {
+      logo.style.color = newTheme === 'light' ? 'black' : 'white';
+    }
+
     toast({
       title: "Theme Updated",
       description: `Switched to ${newTheme} mode`,
@@ -288,9 +297,10 @@ export default function SettingsPage() {
       // Reset to original teal theme
       const defaultPreferences = {
         kanban: {
-          todoColor: '#14b8a6',       // Teal (original theme)
-          inProgressColor: '#f59e0b', // Amber
-          completedColor: '#10b981'   // Emerald
+          todoColor: '#f59e0b',
+          pendingColor: '#ffcc00', // Add yellow for pending
+          inProgressColor: '#10b981', 
+          completedColor: '#14b8a6'
         },
         theme: {
           accentColor: '#14b8a6',     // Teal accent (original theme)
@@ -336,32 +346,43 @@ export default function SettingsPage() {
 
   const applyThemeChanges = (preferences: any) => {
     const root = document.documentElement;
-    
+
     // Apply custom CSS variables for colors
     if (preferences.kanban) {
       root.style.setProperty('--kanban-todo-color', preferences.kanban.todoColor);
       root.style.setProperty('--kanban-progress-color', preferences.kanban.inProgressColor);
       root.style.setProperty('--kanban-completed-color', preferences.kanban.completedColor);
+      root.style.setProperty('--kanban-pending-color', preferences.kanban.pendingColor);
     }
-    
-    if (preferences.theme) {
-      root.style.setProperty('--accent-color', preferences.theme.accentColor);
-      
-      // Apply border radius
-      const radiusMap = { small: '4px', medium: '8px', large: '12px' };
-      root.style.setProperty('--border-radius', radiusMap[preferences.theme.borderRadius as keyof typeof radiusMap] || '8px');
-      
-      // Apply font size
-      const fontSizeMap = { small: '14px', medium: '16px', large: '18px' };
-      root.style.setProperty('--base-font-size', fontSizeMap[preferences.theme.fontSize as keyof typeof fontSizeMap] || '16px');
-    }
-    
+
+    // Use original teal color for accent
+    root.style.setProperty('--accent-color', '#14b8a6');
+
+    // Sidebar, menus, and footer
+    root.style.setProperty('--sidebar-background', '#14b8a6');
+    root.style.setProperty('--sidebar-border-color', '#14b8a6');
+    root.style.setProperty('--menu-border-color', '#14b8a6');
+    root.style.setProperty('--footer-background', '#14b8a6');
+    root.style.setProperty('--footer-border-color', '#14b8a6');
+
+    // Apply border radius
+    const radiusMap = { small: '4px', medium: '8px', large: '12px' };
+    root.style.setProperty('--border-radius', radiusMap[preferences.theme.borderRadius as keyof typeof radiusMap] || '8px');
+
+    // Apply font size
+    const fontSizeMap = { small: '14px', medium: '16px', large: '18px' };
+    root.style.setProperty('--base-font-size', fontSizeMap[preferences.theme.fontSize as keyof typeof fontSizeMap] || '16px');
+
     // Apply UI preferences
     if (preferences.ui) {
       root.style.setProperty('--animation-duration', preferences.ui.showAnimations ? '300ms' : '0ms');
       root.classList.toggle('high-contrast', preferences.ui.highContrast);
       root.classList.toggle('compact-mode', preferences.ui.compactMode);
     }
+
+    // Force refresh styles
+    const styleRefreshEvent = new Event('style-refresh');
+    root.dispatchEvent(styleRefreshEvent);
   };
 
   return (
@@ -425,7 +446,7 @@ export default function SettingsPage() {
                           className="w-full" 
                         />
                         <div className="flex justify-between text-xs text-muted-foreground">
-                          <span>{tutorialProgress.completedTasks}/{tutorialProgress.existingTasks} tasks completed</span>
+                          <span>{tutorialProgress.completedTasks}/6 tasks completed</span>
                           <span>{tutorialProgress.completionPercentage}% complete</span>
                         </div>
                         
@@ -699,6 +720,24 @@ export default function SettingsPage() {
                           />
                         </div>
                       </div>
+
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="pending-color" className="text-sm font-medium">Pending Column</Label>
+                        <div className="flex items-center space-x-2">
+                          <div 
+                            className="w-6 h-6 rounded border-2 border-gray-200 dark:border-[var(--sidebar-accent)] dark:hover:border-[var(--sidebar-accent-hov)]"
+                            style={{ backgroundColor: userPreferences.kanban.pendingColor }}
+                          />
+                          <input
+                            type="color"
+                            id="pending-color"
+                            value={userPreferences.kanban.pendingColor}
+                            onChange={(e) => updatePreference('kanban', 'pendingColor', e.target.value)}
+                            className="w-8 h-8 rounded border-0 cursor-pointer"
+                            disabled={savingPreferences}
+                          />
+                        </div>
+                      </div>
                     </div>
                     
                     <Alert>
@@ -906,6 +945,8 @@ export default function SettingsPage() {
 
         </CardContent>
       </Card>
+
+      <div className="settings-dashboard-container lg:mb-10" /> {/* Add margin for large screens */}
     </div>
   );
 }

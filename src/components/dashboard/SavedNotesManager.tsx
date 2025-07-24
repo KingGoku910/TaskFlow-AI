@@ -358,7 +358,7 @@ export function SavedNotesManager({ onCreateTask, onNoteCreated, onEditNote }: S
   const renderListView = () => (
     <div className="space-y-4">
       {filteredNotes.map((note) => (
-        <div key={note.id} className="border rounded-lg p-2 space-y-1 w-full max-w-[90%] items-start">
+  <div key={note.id} className="border rounded-lg p-3 space-y-2 w-full max-w-[90%] items-start">
           <div className="flex items-start justify-between w-[100%]">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1">
@@ -414,12 +414,22 @@ export function SavedNotesManager({ onCreateTask, onNoteCreated, onEditNote }: S
   );
 
   const renderGridView = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
       {filteredNotes.map((note) => (
-        <div key={note.id} className="border rounded-lg p-4 space-y-3 hover:shadow-md transition-shadow">
+  <div key={note.id} className="border rounded-lg p-4 space-y-3 hover:shadow-lg transition-shadow" style={{
+    boxShadow: '0 0 8px 2px var(--tw-shadow-accent, #0ff)',
+    overflow: 'visible',
+    outline: '2px solid transparent',
+    outlineOffset: '4px'
+  }}>
           {/* Icon Thumbnail */}
           <div className="flex items-center gap-3 mb-3">
-            <div className={`w-10 h-10 rounded-lg bg-accent flex items-center justify-center text-white`}>
+            <div className={`w-10 h-10 rounded-lg bg-accent flex items-center justify-center text-white relative z-10`} style={{
+              boxShadow: '0 0 8px 2px var(--tw-shadow-accent, #0ff)',
+              overflow: 'visible',
+              outline: '2px solid transparent',
+              outlineOffset: '3px'
+            }}>
               {note.generated_by_ai ? (
                 <Bot className="h-5 w-5" />
               ) : (
@@ -547,7 +557,7 @@ export function SavedNotesManager({ onCreateTask, onNoteCreated, onEditNote }: S
   }
 
   return (
-    <Card role="region" aria-labelledby="saved-notes-heading">
+    <Card role="region" aria-labelledby="saved-notes-heading" className="mb-2 mr-4">
       <CardHeader id="saved-notes-heading">
         <CardTitle className="flex items-center gap-2">
           <FileText className="h-5 w-5" />
@@ -637,7 +647,7 @@ export function SavedNotesManager({ onCreateTask, onNoteCreated, onEditNote }: S
             </p>
           </div>
         ) : (
-          <ScrollArea className="h-[600px]">
+          <ScrollArea className="h-[600px] p-1">
             {viewMode === 'list' ? renderListView() : renderGridView()}
           </ScrollArea>
         )}

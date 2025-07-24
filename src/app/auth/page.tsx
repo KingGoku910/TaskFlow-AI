@@ -167,7 +167,7 @@ export default function AuthPage() {
         <Card className="border-primary/20 bg-card">
           <CardHeader className="border-b border-primary/10">
             <CardTitle className="text-primary">Sign In</CardTitle>
-            <CardDescription>Access your Effecto TaskFlow dashboard.</CardDescription>
+            <CardDescription>Access your TaskFlow AI dashboard.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <form onSubmit={handleClientSignIn} className="space-y-4">
@@ -247,7 +247,7 @@ export default function AuthPage() {
         <Card className="border-primary/20 bg-card">
           <CardHeader className="border-b border-primary/10">
             <CardTitle className="text-primary">Sign Up</CardTitle>
-            <CardDescription>Create your Effecto TaskFlow account.</CardDescription>
+            <CardDescription>Create your TaskFlow AI account.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <form action={signUpAction} className="space-y-4">

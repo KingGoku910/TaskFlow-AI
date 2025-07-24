@@ -328,7 +328,12 @@ createdAt: "${new Date().toISOString()}"`;
       </CardHeader>
       
       <CardContent className="space-y-6">
-        <audio ref={audioRef} onEnded={() => setIsPlaying(false)} />
+        <audio 
+          ref={audioRef} 
+          onEnded={() => setIsPlaying(false)}
+          preload="none"
+          style={{ display: 'none' }}
+        />
         
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-3">

@@ -59,7 +59,7 @@ export function FeaturesOverviewSection() {
             Everything You Need to Get Organized
           </LdgHeading2>
           <LdgParagraph className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-foreground/80">
-            From AI-powered task breakdown to visual project management, Effecto TaskFlow streamlines your workflow.
+            From AI-powered task breakdown to visual project management, TaskFlow AI streamlines your workflow.
           </LdgParagraph>
         </LdgDiv>
         <LdgDiv className="mx-auto grid max-w-5xl items-stretch gap-8 sm:grid-cols-2 md:gap-12 lg:grid-cols-3">
