@@ -85,8 +85,8 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/Innova-TEX-AI-TaskFlow AI.git
-   cd Innova-TEX-AI-TaskFlow AI
+   git clone https://github.com/KingGoku910/Effecto-TaskFlow.git
+   cd Effecto-TaskFlow
    ```
 
 2. **Install dependencies**
@@ -185,7 +185,7 @@ This project is licensed under a Custom Commercial License - see the [LICENSE](L
 ## 📞 Support
 
 - 📧 Email: support@innova-tex.com
-- 🐛 Issues: [GitHub Issues](https://github.com/your-username/Innova-TEX-AI-TaskFlow AI/issues)
+- 🐛 Issues: [GitHub Issues](https://github.com/KingGoku910/Effecto-TaskFlow/issues)
 - 📖 Documentation: [Full Docs](docs/)
 
 ---

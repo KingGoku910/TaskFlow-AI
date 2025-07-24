@@ -1,6 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
+#########################
+# Dependencies
+#########################
 /node_modules
 /.pnp
 .pnp.*
@@ -10,41 +12,47 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
-
-# next.js
+#########################
+# Build and Output
+#########################
 /.next/
 /out/
-
-# production
 /build
+*.tsbuildinfo
+next-env.d.ts
 
-# misc
-.DS_Store
-*.pem
+#########################
+# Testing
+#########################
+/coverage
 
-# debug
+#########################
+# Environment and Secrets
+#########################
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+!.env.example
+
+#########################
+# Debug and Logs
+#########################
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
+*.tmp
+*.temp
+.cache/
 
-# vercel
+#########################
+# Development Tools
+#########################
 .vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# AI development
 .genkit/*
-
-# Environment variables (SENSITIVE)
-.env*
-!.env.example
-
-# BMad Framework Files (Development Only)
 /web-bundles/
 /.bmad-core/
 /.bmad-creator-tools/
@@ -54,8 +62,6 @@ next-env.d.ts
 /.idx/
 /.modified
 /.roomodes
-
-# Development and testing files
 /generated-notes/
 /test-notes.js
 /deploy-migration.ps1
@@ -64,7 +70,9 @@ next-env.d.ts
 /ITERATION-SUMMARY.md
 /ui_backend_data_flow.svg
 
-# Database files to exclude (keep only complete-schema.sql)
+#########################
+# Database Migration Files
+#########################
 /database/add-*.sql
 /database/quick-fix-*.sql
 /database/verify-*.sql
@@ -73,35 +81,37 @@ next-env.d.ts
 /database/schema-v3-*.sql
 /database/SETUP-*.md
 
-# Logs and temporary files
-*.log
-*.tmp
-*.temp
-.cache/
-
-# IDE and editor files
+#########################
+# IDE and Editor
+#########################
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# OS generated files
-Thumbs.db
+#########################
+# OS Generated Files
+#########################
 .DS_Store
 .DS_Store?
 ._*
 .Spotlight-V100
 .Trashes
 ehthumbs.db
+Thumbs.db
 
-# Backup files
+#########################
+# Backup and Temp Files
+#########################
 *.bak
 *.backup
 *.old
+*.pem
 
-# Hide
-test-webhook.js
+#########################
+# Miscellaneous
+#########################
 test-webhook.js
 test-api-endpoints.js
 middleware.ts
@@ -110,7 +120,13 @@ STRIPE-WEBHOOK-SETUP.md
 GITHUB-SETUP.md
 BILLING-IMPLEMENTATION-GUIDE.md
 BILLING-IMPLEMENTATION-SUMMARY.md
-./docs/
-./database/
-# Local Netlify folder
 .netlify
+
+#########################
+# Documentation
+#########################
+/docs/migration-log-*.md
+/docs/checklist-*.md
+/docs/temp-*.md
+/docs/scratch-*.md
+/docs/meeting-notes-*.md
