@@ -2,7 +2,7 @@
 # https://supabase.com/docs/guides/local-development/cli/config
 # A string used to distinguish different Supabase projects on the same host. Defaults to the
 # working directory name when running `supabase init`.
-project_id = "Effecto_-_TaskFlow"
+project_id = "TaskFlow-AI"
 
 [api]
 enabled = true
@@ -72,8 +72,8 @@ enabled = true
 port = 54323
 # External URL of the API server that frontend connects to.
 api_url = "http://127.0.0.1"
-# OpenAI API Key to use for Supabase AI in the Supabase Studio.
-openai_api_key = "env(OPENAI_API_KEY)"
+# API Key to use for Supabase AI in the Supabase Studio (using Google Gemini).
+openai_api_key = "env(GEMINI_API_KEY)"
 
 # Email testing server. Emails sent with the local dev setup are not actually sent - rather, they
 # are monitored, and you can view the emails that would have been sent from the web interface.
@@ -107,9 +107,13 @@ file_size_limit = "50MiB"
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
-site_url = "http://localhost:9000"
+site_url = "https://taskflow-ai.innovatex-ai.net"
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["http://localhost:9000", "http://127.0.0.1:9000"]
+additional_redirect_urls = [
+	"https://taskflow-ai.innovatex-ai.net",
+	"http://localhost:9000",
+	"http://127.0.0.1:9000"
+]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # If disabled, the refresh token will never expire.
@@ -169,14 +173,14 @@ otp_length = 6
 otp_expiry = 3600
 
 # Use a production-ready SMTP server
-# [auth.email.smtp]
-# enabled = true
-# host = "smtp.sendgrid.net"
-# port = 587
-# user = "apikey"
-# pass = "env(SENDGRID_API_KEY)"
-# admin_email = "admin@email.com"
-# sender_name = "Admin"
+[auth.email.smtp]
+enabled = true
+host = "env(SMTP_HOST)"  # Your SMTP host
+port = 587                # SMTP port (e.g., 587 for TLS)
+user = "env(SMTP_USER)"  # SMTP user (environment variable)
+pass = "env(SMTP_PASS)"  # SMTP password (environment variable)
+admin_email = "ryno@innovatex-ai.net"
+sender_name = "Innova-TEX AI"
 
 # Uncomment to customize email template
 # [auth.email.template.invite]

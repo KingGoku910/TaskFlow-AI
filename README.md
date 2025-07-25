@@ -1,16 +1,14 @@
 # TaskFlow AI 🚀
 
 **AI-powered productivity suite with meeting summaries, task management, and comprehensive billing system**
-
-![Next.js](https://img.shields.io/badge/Next.js-15.3.5-black?style=flat-square&logo=next.js)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)
 ![Supabase](https://img.shields.io/badge/Supabase-Database-green?style=flat-square&logo=supabase)
 ![Stripe](https://img.shields.io/badge/Stripe-Payments-purple?style=flat-square&logo=stripe)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=flat-square&logo=tailwind-css)
 
 ## 🌟 Features
-
+   git clone https://github.com/KingGoku910/TaskFlow-AI.git
 ### � Core Productivity
+   cd TaskFlow-AI
 - **Smart Dashboard** - Comprehensive overview of tasks, meetings, and analytics
 - **AI Task Management** - Intelligent task decomposition and prioritization
 - **Meeting Summaries** - AI-powered meeting transcription and summarization
@@ -46,10 +44,6 @@
 
 ### 🔧 Improvements
 - **Audio Error Handling** - Fixed meeting summary playback issues
-- **Navigation Integration** - Added billing and profile to main navigation
-- **API Endpoints** - Comprehensive billing and subscription APIs
-- **Database Schema** - Complete billing and user management tables
-
 ## 🛠️ Tech Stack
 
 ### Frontend
@@ -70,18 +64,10 @@
 - **Subscription Management** - Automated billing cycles
 
 ### AI & ML
-- **Google Gemini** - AI-powered content generation
-- **Speech Recognition** - Meeting transcription
-- **Natural Language Processing** - Content analysis
-
 ## ⚡ Quick Start
 
 ### Prerequisites
-- Node.js 18+ and npm
-- [Supabase](https://supabase.com) account
-- [Google AI Studio](https://ai.google.dev) API key
 
-### Installation
 
 1. **Clone the repository**
    ```bash

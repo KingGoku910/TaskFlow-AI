@@ -1,6 +1,8 @@
 # example netlify.toml
 [build]
   command = "npm run build"
+  # Base directory when deploying from GitHub
+  base = "."
   functions = "netlify/functions"
   publish = ".next"
 
@@ -25,26 +27,39 @@
     ENABLE_MEETING_SUMMARIES = "$ENABLE_MEETING_SUMMARIES"
     ENABLE_ADVANCED_ANALYTICS = "$ENABLE_ADVANCED_ANALYTICS"
     ENABLE_TEAM_COLLABORATION = "$ENABLE_TEAM_COLLABORATION"
-    LOG_LEVEL = "$LOG_LEVEL"
+    LOG_LEVEL = "info"
     ENABLE_PAYMENT_LOGGING = "$ENABLE_PAYMENT_LOGGING"
     ENABLE_USAGE_TRACKING = "$ENABLE_USAGE_TRACKING"
 
-  ## Use Netlify's Next.js plugin to handle server functions and edge functions
-  [[plugins]]
-    package = "@netlify/plugin-nextjs"
+## Use Netlify's Next.js plugin to handle server functions and edge functions
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
-  ## Uncomment to use this redirect for Single Page Applications like create-react-app.
-  ## Not needed for static site generators.
-  #[[redirects]]
-  #  from = "/*"
-  #  to = "/index.html"
-  #  status = 200
+## Disable Netlify's local Neon DB emulator
+## Disable Netlify's local Neon DB emulator and run Next.js dev server
+[dev]
+  enableLocalDb = false
+  autoLaunch = false
+  # Run Next.js dev on a different port to avoid conflicts
+  command = "npm run dev -- -p 3001"
+  
+  # Explicitly provide Supabase env vars for Netlify Dev
+  [dev.environment]
+    NEXT_PUBLIC_SUPABASE_URL = "https://iyeoigedkksjghgwugzx.supabase.co"
+    NEXT_PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5ZW9pZ2Vka2tzamdoZ3d1Z3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyNzE3MjIsImV4cCI6MjA2Nzg0NzcyMn0.0T8-XoUpuJ-H3WmgJqO8l86QQDyUwl2QOXHRy8XI3ds"
 
-  ## (optional) Settings for Netlify Dev
-  ## https://github.com/netlify/cli/blob/main/docs/netlify-dev.md#project-detection
-  #[dev]
-  #  command = "yarn start" # Command to start your dev server
-  #  port = 3000 # Port that the dev server will be listening on
-  #  publish = "dist" # Folder with the static content for _redirect file
+## Uncomment to use this redirect for Single Page Applications like create-react-app.
+## Not needed for static site generators.
+#[[redirects]]
+#  from = "/*"
+#  to = "/index.html"
+#  status = 200
 
-  ## more info on configuring this file: https://ntl.fyi/file-based-build-config
+## (optional) Settings for Netlify Dev
+## https://github.com/netlify/cli/blob/main/docs/netlify-dev.md#project-detection
+#[dev]
+#  command = "yarn start" # Command to start your dev server
+#  port = 3000 # Port that the dev server will be listening on
+#  publish = "dist" # Folder with the static content for _redirect file
+
+## more info on configuring this file: https://ntl.fyi/file-based-build-config
