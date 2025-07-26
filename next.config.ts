@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     // Keep Webpack config as fallback for now
+    cache: true,
   },
   turbopack: {},
   async headers() {
