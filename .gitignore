@@ -89,6 +89,7 @@ yarn-error.log*
 *.swp
 *.swo
 *~
+.history/
 
 #########################
 # OS Generated Files
