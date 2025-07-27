@@ -53,7 +53,7 @@ export default function AuthLayout({
 
   return (
     <div className="relative flex flex-col min-h-screen bg-background">
-      <header className="absolute top-0 left-0 right-0 px-4 lg:px-6 h-16 flex items-center border-b bg-background/80 backdrop-blur-sm shadow-sm z-50">
+  <header className="absolute top-0 left-0 right-0 px-4 lg:px-6 h-16 flex items-center border-b bg-background/80 shadow-sm z-50">
         <Link href="/" className="flex items-center justify-center" prefetch={false}>
           <AppLogoSvg className="h-7 w-7 text-primary" />
           <span className="sr-only">TaskFlow AI</span>
