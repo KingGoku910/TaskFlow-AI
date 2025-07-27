@@ -15,11 +15,12 @@ export default function QuickSignInPage() {
     setMessage('Sending magic link...');
 
     try {
+      const emailRedirectTo = typeof window !== 'undefined' ? `${window.location.origin}/refresh-session` : undefined;
       const { data, error } = await supabase.auth.signInWithOtp({
         email: 'ryno.rossouw@outlook.com',
         options: {
           shouldCreateUser: false,
-          emailRedirectTo: `${window.location.origin}/refresh-session`
+          emailRedirectTo
         }
       });
 
@@ -44,8 +45,9 @@ export default function QuickSignInPage() {
     setMessage('Sending password reset...');
 
     try {
+      const redirectTo = typeof window !== 'undefined' ? `${window.location.origin}/reset-password` : undefined;
       const { error } = await supabase.auth.resetPasswordForEmail('ryno.rossouw@outlook.com', {
-        redirectTo: `${window.location.origin}/reset-password`
+        redirectTo
       });
 
       if (error) {
