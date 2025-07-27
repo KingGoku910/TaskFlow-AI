@@ -226,15 +226,16 @@ export default function MeetingSummariesPage() {
       });
 
       // Set up callbacks
-      recorder.onTranscriptUpdate = (rawTranscript: string, enhanced: string) => {
+      const debouncedTranscriptUpdate = debounce((rawTranscript: string, enhanced: string) => {
         setLiveTranscript(rawTranscript);
         setEnhancedTranscript(enhanced);
-        
         // Auto-scroll to bottom
         if (transcriptRef.current) {
           transcriptRef.current.scrollTop = transcriptRef.current.scrollHeight;
         }
-      };
+      }, 2500); // 2.5 seconds debounce for extra safety
+
+      recorder.onTranscriptUpdate = debouncedTranscriptUpdate;
 
       recorder.onError = (error: Error) => {
         console.error('Recording error:', error);
@@ -988,7 +989,11 @@ export default function MeetingSummariesPage() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => setIsEditingTranscript(!isEditingTranscript)}
+                              onClick={() => {
+                                console.log('Before view function');
+                                setIsEditingTranscript(!isEditingTranscript);
+                                console.log('After view function');
+                              }}
                               className="text-xs"
                             >
                               {isEditingTranscript ? 'View' : 'Edit'}
@@ -1287,4 +1292,13 @@ export default function MeetingSummariesPage() {
       </div>
     </TooltipProvider>
   );
+}
+
+// Debounce utility
+function debounce<T extends (...args: any[]) => void>(func: T, wait: number) {
+  let timeout: NodeJS.Timeout | null = null;
+  return (...args: Parameters<T>) => {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
 }
