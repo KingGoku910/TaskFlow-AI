@@ -66,6 +66,7 @@
     "recharts": "^2.15.1",
     "rehype-highlight": "^7.0.2",
     "remark-gfm": "^4.0.1",
+    "sass": "^1.89.2",
     "stripe": "^18.3.0",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
